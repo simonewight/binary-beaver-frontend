@@ -12,6 +12,8 @@ const api = axios.create({
 // Add auth token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token')
+  console.log('Request URL:', config.url)  // Debug log
+  console.log('Token present:', !!token)    // Debug log
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -20,13 +22,22 @@ api.interceptors.request.use((config) => {
 
 // Add response interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response success:', response.config.url)  // Debug log
+    return response
+  },
   async (error) => {
+    console.log('Response error:', {  // Debug log
+      url: error.config.url,
+      status: error.response?.status,
+      data: error.response?.data
+    })
+
     const originalRequest = error.config
 
-    // If the error is 401 and we haven't tried to refresh the token yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
+      console.log('Attempting token refresh...')  // Debug log
 
       try {
         const response = await api.post('/auth/token/refresh/', {
@@ -34,11 +45,13 @@ api.interceptors.response.use(
         })
 
         if (response.data.access) {
+          console.log('Token refresh successful')  // Debug log
           localStorage.setItem('access_token', response.data.access)
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`
           return api(originalRequest)
         }
       } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError)  // Debug log
         window.location.href = '/login'
         return Promise.reject(refreshError)
       }

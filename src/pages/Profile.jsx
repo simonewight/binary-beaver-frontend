@@ -48,11 +48,12 @@ const Profile = () => {
   const loadStats = async () => {
     try {
       setIsStatsLoading(true)
+      console.log('Fetching stats...')  // Debug log
       const response = await auth.getStats()
-      console.log('Stats response:', response.data)  // For debugging
+      console.log('Stats response:', response)  // Debug full response
       setStats(response.data)
     } catch (error) {
-      console.error('Failed to load stats:', error)
+      console.error('Failed to load stats:', error.response || error)  // Log full error
       toast.error('Failed to load profile stats')
     } finally {
       setIsStatsLoading(false)
@@ -62,13 +63,15 @@ const Profile = () => {
   const loadActivity = async () => {
     try {
       setIsActivityLoading(true)
+      console.log('Fetching activity...')  // Debug log
       const response = await auth.getActivity()
+      console.log('Activity response:', response)  // Debug full response
       setActivity({
         snippets: response.data.recent_snippets,
         collections: response.data.recent_collections
       })
     } catch (error) {
-      console.error('Failed to load activity:', error)
+      console.error('Failed to load activity:', error.response || error)  // Log full error
       toast.error('Failed to load recent activity')
     } finally {
       setIsActivityLoading(false)
@@ -76,6 +79,7 @@ const Profile = () => {
   }
 
   useEffect(() => {
+    console.log('Current user:', user)  // Debug log
     loadProfileData()
     loadStats()
     loadActivity()
