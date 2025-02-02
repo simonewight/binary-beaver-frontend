@@ -1,9 +1,15 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 import { Search, Star, Heart, User } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 const Home = () => {
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  console.log('Home rendering:', { user })
+
   return (
     <div className="bg-slate-900 min-h-screen">
       {/* Hero Section */}
@@ -15,10 +21,19 @@ const Home = () => {
           Join the next generation of coders in a fun, interactive space where learning meets gaming.
         </p>
         <div className="flex justify-center gap-4">
-          <Button size="lg" className="bg-white text-slate-900 hover:bg-slate-100">
-            Start Coding Now
+          <Button 
+            size="lg" 
+            className="bg-white text-slate-900 hover:bg-slate-100"
+            onClick={() => navigate(user ? '/profile' : '/register')}
+          >
+            {user ? 'Start Coding Now' : 'Get Started'}
           </Button>
-          <Button size="lg" variant="outline" className="text-white border-white">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="text-white border-white"
+            onClick={() => navigate('/snippets')}
+          >
             Explore Blox
           </Button>
         </div>

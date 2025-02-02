@@ -1,3 +1,47 @@
+# Code Blox
+> A modern code snippet sharing platform
+
+## Mission Statement
+Code Blox is a collaborative platform designed for developers to share, discover, and organize code snippets. It provides a clean, modern interface for sharing code with syntax highlighting, comments, and collections functionality. The platform aims to make code sharing and discovery as seamless as possible.
+
+## Features
+
+### Summary
+- User authentication and authorization
+- Code snippet creation and sharing
+- Syntax highlighting for multiple languages
+- Comments and likes on snippets
+- Collections for organizing snippets
+- Search and filtering capabilities
+
+### Users
+
+| Type | Access | Role type assignment |
+|------|---------|---------------------|
+| Regular User | - Can create/edit/delete own snippets<br>- Can like snippets<br>- Can comment on snippets<br>- Can create collections | All registered users |
+| Guest | - Can view public snippets<br>- Can search snippets | Public visitors |
+
+### Technical Implementation
+
+#### Back-End
+- Django REST Framework
+- PostgreSQL database
+- JWT authentication
+- REST API endpoints
+
+#### Front-End
+- React 18
+- Tailwind CSS
+- React Router v6
+- React Hook Form + Zod
+- Framer Motion
+- Axios
+
+#### Git & Deployment
+- GitHub for version control
+- Netlify for front-end deployment
+- Render/Railway for back-end deployment
+
 # Your Product Name
 > Your Group Name
 
@@ -50,13 +94,41 @@
     - [Font](#font)
 
 
+## Features
+
+- User authentication
+- Code snippet sharing
+- Syntax highlighting
+- Comments and likes
+- Collections
+- Search and filtering
+
+## Tech Stack
+
+- React
+- Tailwind CSS
+- React Router
+- Framer Motion
+- React Hook Form
+- Zod
+- Axios
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
+```
+
 ## Mission Statement
 
 > [!NOTE]  
 > What is the purpose of your project? (approx 100-200 words). Example below.
 
 Win-Wall is an online collaboration tool that provides organisers of SheCodes workshops as well as their attendees a visual workspace where they can add digital sticky notes to a blank digital wall in order to share wins with others during live events.
-This tool offers an unlimited number of digital win walls which are organised by event collection in order to facilitate collaboration during live events and easily bring all attendees’ wins to light in real time.
+This tool offers an unlimited number of digital win walls which are organised by event collection in order to facilitate collaboration during live events and easily bring all attendees' wins to light in real time.
 Win-Wall comes packed full of features such as the ability to share a unique digital win wall to a live audience, easily approve and export win wall messages to upload on a WordPress website, manage user roles to give event organisers and attendees access to different functionalities, and many more.
 
 ## Features
@@ -84,7 +156,7 @@ Provide Guest users ability to post sticky notes to a live event board. Once pos
 | Post                                           | Post as Guest                                                                                                                                                                                                    | <br> - Submits Sticky note to Live event board                                                                |
 | View                                           | Guests, Approvers and Admin can view posts via Live event board Admin and Approvers can view once status updated from Live                                                                                       |                                                                                                               |
 | Edit                                           | Can be edited by Admin and Approvers                                                                                                                                                                             | <br> - Edit sticky note text, eg: for spelling errors before Status is set to approved                        |
-| Statuses: Live, Unapproved, Approved, Archived | <br> - Auto status of notes will be ‘live’ based on linked event  <br> - Auto status of notes will be unapproved based on closure of linked event  <br> - Update to Approved and Archived by Admin and Approvers |                                                                                                               |
+| Statuses: Live, Unapproved, Approved, Archived | <br> - Auto status of notes will be 'live' based on linked event  <br> - Auto status of notes will be unapproved based on closure of linked event  <br> - Update to Approved and Archived by Admin and Approvers |                                                                                                               |
 | Export                                         | <br> - Export as Admin only                                                                                                                                                                                      | <br> - CSV file  <br> - Format: collection, event, sticky note text                                           |
 | Flag- Is Exported                              | <br> - Auto flag based on whether Admin has exported the sticky note                                                                                                                                             | <br> - Boolean                                                                                                |
 | Link to Collection                             | <br> - Controlled by Admin                                                                                                                                                                                       | <br> - Based on type of event, eg: shecodes flash, plus, other event types.                                   |
@@ -105,7 +177,7 @@ Provide Guest users ability to post sticky notes to a live event board. Once pos
 
 | Endpoint              | functionality                                                                                                                                                                     | comments                                                                                         |
 | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| Create and post notes | <br> - Available to anyone with URL   <br> - Add sticky notes   <br> - Post sticky notes                                                                                          | <br> - Sticky note ‘feel’ is preferred  <br> - Easy to read and accessible  <br> - Good contrast |
+| Create and post notes | <br> - Available to anyone with URL   <br> - Add sticky notes   <br> - Post sticky notes                                                                                          | <br> - Sticky note 'feel' is preferred  <br> - Easy to read and accessible  <br> - Good contrast |
 | Event board           | <br> - Once note is posted, redirect to live session  notes  <br> - Able to post more notes (redirect back or add directly?)  <br> - Live session ends at midnight – day of event | <br> - view live notes  <br> - search notes by text/hashtag                                      |
 | Admin page            | All admin functions  <br> - can also create another admin account                                                                                                                 | <br> - Requires auth  <br> - initial admin created by DB                                         |
 | Register as Approver  | <br> - users can register as approvers  <br> - once registered, approver can log in                                                                                               | Requires shecodes email address to be used                                                       |
@@ -151,56 +223,56 @@ We will also use Insomnia to ensure API endpoints are working smoothly (we will 
 > [!NOTE]  
 > Who is the website for? (approx 100 words). Example below.
 
-This website has two major target audiences: She Codes ‘Leaders, Volunteers & Mentors’, and ‘She Coders’ joining the one-day/short-term workshops. 
+This website has two major target audiences: She Codes 'Leaders, Volunteers & Mentors', and 'She Coders' joining the one-day/short-term workshops. 
 
-**She Codes Leaders, Volunteers and Mentors** (administrators) will use this website to assign one-day workshop coders to specific events and/or collections where they can fill-out a “sticky note” win and paste it on the WinsWall. The administrators will then be able to sort, authorise and delete these stickies and easily download the data in a CSV file. This website is targeted towards this group in order to automate a normally menial task.
+**She Codes Leaders, Volunteers and Mentors** (administrators) will use this website to assign one-day workshop coders to specific events and/or collections where they can fill-out a "sticky note" win and paste it on the WinsWall. The administrators will then be able to sort, authorise and delete these stickies and easily download the data in a CSV file. This website is targeted towards this group in order to automate a normally menial task.
 
-**She Coders** (laypeople) will use this website to post their Win on a WinWall board, keep track of what events they’ve attended and also view previously written wins. This website is targeted to this group in order to prevent loss of paper data (physical sticky notes) and also make the WinsWall more interactive.
+**She Coders** (laypeople) will use this website to post their Win on a WinWall board, keep track of what events they've attended and also view previously written wins. This website is targeted to this group in order to prevent loss of paper data (physical sticky notes) and also make the WinsWall more interactive.
 
 ## Back-end Implementation
 ### API Specification
 
 | HTTP Method | URL                                 | Purpose                                                                                                                                  | Request Body                                                                                                       | Successful Response Code | Authentication and Authorization                      |
 | :---------- | :---------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- | :----------------------- | :---------------------------------------------------- |
-| POST        | /login                              | Allow users to log in                                                                                                                    | ““Username”:”string”, “password”:”string”                                                                          | 200                      | Token auth                                            |
-| POST        | /logout                             | Allow users to log out ( end active session)                                                                                             | ““Username”:”string”, “password”:”string”                                                                          | 200                      | Will clear user log in session \- remove stored token |
-| POST        | /Register                           | Create new student or approver user                                                                                                      | “Username”:”string”, “FullName”: “string” “Email”:”string”,”Password”:”string”, ”Password2”:”string”,              | 201                      | Admin                                                 |
-| PUT         | /Profile/ID                         | Edit user                                                                                                                                | “Username”:”string”, “FullName”: “string” “Email”:”string”, “Avatar”:”string”,  “Bio”:”string”, “Socials”:”string” | 200                      | Admin, approver or student with matching ID           |
+| POST        | /login                              | Allow users to log in                                                                                                                    | ""Username":"string", "password":"string"                                                                          | 200                      | Token auth                                            |
+| POST        | /logout                             | Allow users to log out ( end active session)                                                                                             | ""Username":"string", "password":"string"                                                                          | 200                      | Will clear user log in session - remove stored token |
+| POST        | /Register                           | Create new student or approver user                                                                                                      | "Username":"string", "FullName":"string" "Email":"string",""Password":"string", ""Password2":"string",              | 201                      | Admin                                                 |
+| PUT         | /Profile/ID                         | Edit user                                                                                                                                | "Username":"string", "FullName":"string" "Email":"string", "Avatar":"string",  "Bio":"string", "Socials":"string" | 200                      | Admin, approver or student with matching ID           |
 | GET         | /Profile/ID                         | View User profile                                                                                                                        | NA                                                                                                                 | 200                      | Any                                                   |
 | DELETE      | /User/ID                            | Delete user                                                                                                                              | NA                                                                                                                 | 204                      | Admin, approver or student with matching ID           |
-| POST        | /EventCollection                    | Create new Event Collection                                                                                                              | “Title”:”string”, “IsExported”:”boolean” “Approver”: integer                                                       | 201                      | Admin                                                 |
-| PUT         | /EventCollection/Id                 | Update Event collection                                                                                                                  | “Title”:”string”, “IsExported”:”boolean”                                                                           | 200                      | Admin, Approver linked to event?                      |
+| POST        | /EventCollection                    | Create new Event Collection                                                                                                              | "Title":"string", "IsExported":"boolean" "Approver": integer                                                       | 201                      | Admin                                                 |
+| PUT         | /EventCollection/Id                 | Update Event collection                                                                                                                  | "Title":"string", "IsExported":"boolean"                                                                           | 200                      | Admin, Approver linked to event?                      |
 | DELETE      | /EventCollection/Id                 | Delete Event collection                                                                                                                  | NA                                                                                                                 | 204                      | Admin                                                 |
-| POST        | /EventBoard/                        | Create new Event board                                                                                                                   | “Title”: “string”, “StartDate”:”datetime”, “EndDate:”datetime”                                                     | 201                      | Admin, approvers                                      |
-| PUT         | /EventBoard/ID                      | Update Event board                                                                                                                       | “Title”: “string”, “StartDate”:”datetime”, “EndDate:”datetime”                                                     | 200                      | Admin, approvers                                      |
+| POST        | /EventBoard/                        | Create new Event board                                                                                                                   | "Title": "string", "StartDate":"datetime", "EndDate":"datetime"                                                     | 201                      | Admin, approvers                                      |
+| PUT         | /EventBoard/ID                      | Update Event board                                                                                                                       | "Title": "string", "StartDate":"datetime", "EndDate":"datetime"                                                     | 200                      | Admin, approvers                                      |
 | DELETE      | /EventBoard/ID                      | Delete Event board                                                                                                                       | NA                                                                                                                 | 204                      | Admin or author of event                              |
 | GET         | /EventBoard/ID                      | Get Event board details                                                                                                                  | NA                                                                                                                 | 200                      | Open access                                           |
-| POST        | /stickyNote/                        | Create a new sticky note as Guest user                                                                                                   | “WinComment”:”string”                                                                                              | 201                      | Open access                                           |
-| GET         | /stickyNotes/?Status=Live\&Event.ID | Get Sticky notes for an event  Use query params to filter by event ID and Status                                                         | NA                                                                                                                 | 200                      | Open access                                           |
+| POST        | /stickyNote/                        | Create a new sticky note as Guest user                                                                                                   | "WinComment":"string"                                                                                              | 201                      | Open access                                           |
+| GET         | /stickyNotes/?Status=Live&Event.ID | Get Sticky notes for an event  Use query params to filter by event ID and Status                                                         | NA                                                                                                                 | 200                      | Open access                                           |
 | GET         | /stickyNotes/?Event.ID              | Get Sticky notes for an event                                                                                                            | NA                                                                                                                 | 200                      | Admin, approvers                                      |
 | GET         | /stickyNotes/                       | Export sticky notes as CSV (eg:response.setContentType("text/csv")) Can optionally filter by: event ID, Status, isexported, collectionId | NA                                                                                                                 | 200                      | Admin                                                 |
-| PUT         | /stickyNotes/ID                     | Edit sticky note, update status of sticky note to Approved or Archived                                                                   | “WinComment”:”string”                                                                                              | 200                      | Admin, approvers                                      |
-| POST        | /StickyStatus                       | Create available statuses for stickyNotes                                                                                                | “StatusName”:”string”                                                                                              | 201                      | Admin                                                 |
+| PUT         | /stickyNotes/ID                     | Edit sticky note, update status of sticky note to Approved or Archived                                                                   | "WinComment":"string"                                                                                              | 200                      | Admin, approvers                                      |
+| POST        | /StickyStatus                       | Create available statuses for stickyNotes                                                                                                | "StatusName":"string"                                                                                              | 201                      | Admin                                                 |
 | GET         | /StickyStatus                       | Get all statuses                                                                                                                         | NA                                                                                                                 | 200                      | Admin                                                 |
 
 ### Object Definitions
 
 > [!NOTE]  
-> Define the actual objects that your API returns. The example GET method above says it returns “all projects”, so we need to define what a “project” looks like. Example below.
+> Define the actual objects that your API returns. The example GET method above says it returns "all projects", so we need to define what a "project" looks like. Example below.
 
 #### Users
 | Field              | Data type |
 | :----------------- | :-------- |
-| *User\_ID (PK)*    |           |
+| *User_ID (PK)*     |           |
 | *Username*         | string    |
 | FullName           | string    |
 | *Email*            | string    |
 | *Password*         | string    |
 | *Password2*        | string    |
-| Auth\_ID (FK)      | integer   |
+| Auth_ID (FK)       | integer   |
 | StickyNoteId (FK)  | integer   |
-| Event\_Id (FK)     | integer   |
-| Collection\_Id(FK) | integer   |
+| Event_Id (FK)      | integer   |
+| Collection_Id(FK)  | integer   |
 | Avatar             | string    |
 | Bio                | string    |
 | SocialLink         | string    |
@@ -208,20 +280,20 @@ This website has two major target audiences: She Codes ‘Leaders, Volunteers & 
 #### Sticky Notes
 | Field                   | Data Type |
 | :---------------------- | :-------- |
-| Sticky\_ID (PK)         | integer   |
+| Sticky_ID (PK)          | integer   |
 | WinComment              | string    |
 | Guest                   | boolean   |
 | UserId (FK)             | integer   |
-| Event\_Id (FK)          | integrer  |
-| Collection\_Id (FK)     | integrer  |
-| Sticky\_Status\_ID (FK) | integrer  |
+| Event_Id (FK)          | integrer  |
+| Collection_Id (FK)     | integrer  |
+| Sticky_Status_ID (FK)   | integrer  |
 
 > [!NOTE]  
 > ... etc
 
 ### Database Schema
 > [!NOTE]  
-> Insert an image of your database schema (could be a photo of a hand-drawn schema or a screenshot of a schema created using a tool such as ​​https://drawsql.app/). Example below.
+> Insert an image of your database schema (could be a photo of a hand-drawn schema or a screenshot of a schema created using a tool such as https://drawsql.app/). Example below.
 
 ![Our database schema](./img/schema.png)
 
@@ -257,7 +329,7 @@ See all wireframes and how Admins, Approvers and Students would see the Win Wall
 
 ### Font
 
-(We will create a ‘highlight-text’ font style in CSS with the glow effect as per the above - to use on hero section)
+(We will create a 'highlight-text' font style in CSS with the glow effect as per the above - to use on hero section)
 Raleway
 Google fonts:
 
