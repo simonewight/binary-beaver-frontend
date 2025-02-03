@@ -1,15 +1,45 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 import { Search, Star, Heart, User } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import StarField from '../components/ui/StarField'
+import { snippets as snippetsApi } from '../services/api'
+import SnippetCard from '../components/SnippetCard'
 
 const Home = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  console.log('Home rendering:', { user })
+  const [featuredSnippets, setFeaturedSnippets] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadFeaturedSnippets = async () => {
+      try {
+        setLoading(true)
+        // Get the 3 most liked snippets
+        const response = await snippetsApi.getAll({ 
+          limit: 3,
+          ordering: '-likes_count'  // Sort by most likes
+        })
+        if (response.data?.results) {
+          // Ensure we only take the first 3 even if API returns more
+          setFeaturedSnippets(response.data.results.slice(0, 3))
+        }
+      } catch (error) {
+        console.error('Failed to load featured snippets:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadFeaturedSnippets()
+  }, [])
+
+  const handleCategoryClick = (language) => {
+    navigate(`/snippets?language=${language.toLowerCase()}`)
+  }
 
   return (
     <div className="bg-slate-900 min-h-screen">
@@ -34,7 +64,7 @@ const Home = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="text-white border-white px-8 py-3"
+            className="bg-cyan-500 hover:bg-cyan-400 text-white border-none px-8 py-3"
             onClick={() => navigate('/snippets')}
           >
             Explore Blox
@@ -46,49 +76,24 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-white mb-8">Featured Blox</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((item) => (
-            <Card key={item} className="bg-slate-800 border-slate-700">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-medium text-white">Amazing Button Animation</h3>
-                    <div className="flex gap-2 mt-1">
-                      <span className="text-slate-300 text-sm">CSS</span>
-                      <span className="text-slate-300 text-sm">•</span>
-                      <span className="text-slate-300 text-sm">Animation</span>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="text-white">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300">
-                  <pre>
-                    {`.btn-animate {
-  transform: scale(1);
-  transition: 0.3s;
-}
-
-.btn-animate:hover {
-  transform: scale(1.1);
-}`}
-                  </pre>
-                </div>
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
-                      <User className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="text-slate-300 text-sm">@coderPro</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <Star className="h-4 w-4" />
-                    <span className="text-sm">128</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {loading ? (
+            // Show skeleton loading state
+            [1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse bg-slate-800 rounded-lg h-64" />
+            ))
+          ) : (
+            featuredSnippets.map(snippet => (
+              <SnippetCard
+                key={snippet.id}
+                snippet={snippet}
+                onLikeUpdate={(updatedSnippet) => {
+                  setFeaturedSnippets(prev =>
+                    prev.map(s => s.id === updatedSnippet.id ? updatedSnippet : s)
+                  )
+                }}
+              />
+            ))
+          )}
         </div>
       </div>
 
@@ -96,13 +101,19 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-white mb-8">Popular Categories</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {['HTML & CSS', 'JavaScript', 'React', 'Python'].map((category) => (
+          {[
+            { name: 'HTML & CSS', value: 'css' },
+            { name: 'JavaScript', value: 'javascript' },
+            { name: 'React', value: 'jsx' },
+            { name: 'Python', value: 'python' }
+          ].map((category) => (
             <Button
-              key={category}
+              key={category.name}
               variant="outline"
               className="h-24 text-white border-slate-700 hover:bg-slate-800/50 bg-slate-800/30"
+              onClick={() => handleCategoryClick(category.value)}
             >
-              {category}
+              {category.name}
             </Button>
           ))}
         </div>

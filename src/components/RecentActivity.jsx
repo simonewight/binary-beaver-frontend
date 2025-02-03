@@ -1,12 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Code, Library, Calendar } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 const ActivityItem = ({ type, item }) => {
   const isSnippet = type === 'snippet'
   const Icon = isSnippet ? Code : Library
-  const path = isSnippet ? `/snippets/${item.id}` : `/collections/${item.id}`
+  const path = isSnippet ? `/snippet/${item.id}` : `/collections/${item.id}`
 
   return (
     <Link 
@@ -32,6 +32,12 @@ const ActivityItem = ({ type, item }) => {
 }
 
 const RecentActivity = ({ snippets, collections }) => {
+  const navigate = useNavigate()
+
+  const handleSnippetClick = (snippetId) => {
+    navigate(`/snippet/${snippetId}`)
+  }
+
   if (!snippets?.length && !collections?.length) {
     return (
       <div className="text-slate-400 text-center py-8">

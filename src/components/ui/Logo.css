@@ -1,0 +1,41 @@
+.logo-container {
+  position: relative;
+  transform: translate(calc(-1/2 * var(--size)), calc(-1/2 * var(--size)));
+  width: var(--size);
+  height: var(--size);
+  padding: calc(var(--size) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(var(--size) / 4);
+}
+
+.logo-square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  border: solid var(--color) 1px;
+  width: var(--size);
+  height: var(--size);
+  box-shadow: var(--color) 0 0 calc(var(--size) / 10) inset, 
+              var(--color) 0 0 calc(var(--size) / 20);
+  animation: logo-bounce 1.5s cubic-bezier(.46,.03,.52,.96) infinite alternate;
+}
+
+.logo-square:nth-of-type(2) {
+  animation-delay: 200ms;
+}
+
+.logo-square:nth-of-type(3) {
+  animation-delay: 400ms;
+}
+
+@keyframes logo-bounce {
+  from {
+    transform: translate(-50%, -50%) rotate(45deg) translate(calc(-1 * var(--size) / 10), 0);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(45deg) translate(calc(var(--size) / 10), calc(var(--size) / 5));
+  }
+} 

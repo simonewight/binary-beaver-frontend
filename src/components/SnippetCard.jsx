@@ -6,6 +6,7 @@ import { Heart, Star, User } from 'lucide-react'
 import { snippets } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { toast } from 'react-hot-toast'
+import CodePreview from './ui/CodePreview'
 
 const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   const navigate = useNavigate()
@@ -60,17 +61,18 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
           <Button 
             variant="ghost" 
             size="sm" 
-            className={`text-white transition-all ${isLiking ? 'opacity-50' : ''}`}
+            className="text-cyan-500 hover:text-cyan-400"
             onClick={handleLike}
             disabled={isLiking}
           >
-            <Heart className={`h-4 w-4 transition-colors ${snippet.is_liked ? 'fill-current text-red-500' : ''}`} />
+            <Heart className={`h-4 w-4 ${snippet.is_liked ? 'fill-current' : ''}`} />
           </Button>
         </div>
-        <div className="bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300 max-h-32 overflow-hidden">
-          <pre className="line-clamp-4">
-            {snippet.code_content}
-          </pre>
+        <div className="bg-slate-900 rounded-lg overflow-hidden">
+          <CodePreview 
+            code={snippet.code_content}
+            language={snippet.language}
+          />
         </div>
         <div className="flex justify-between items-center mt-4">
           <div className="flex items-center gap-2">

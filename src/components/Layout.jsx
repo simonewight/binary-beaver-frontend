@@ -2,6 +2,7 @@ import React from 'react'
 import { Outlet, useNavigate, Link } from 'react-router-dom'
 import { Button } from './ui/button'
 import { useAuth } from '../context/AuthContext'
+import Logo from './ui/Logo'
 
 const Layout = () => {
   const navigate = useNavigate()
@@ -16,8 +17,10 @@ const Layout = () => {
           <div className="flex justify-between h-16">
             <div className="flex">
               <Link to="/" className="flex items-center">
-                <img src="/logo.png" alt="Logo" className="h-8 w-8" />
-                <span className="ml-2 text-white font-bold">Code Blox</span>
+                <div className="flex items-center gap-2">
+                  <Logo size={27} />
+                  <span className="text-xl font-semibold text-white">Code Blox</span>
+                </div>
               </Link>
             </div>
             <div className="flex items-center gap-6">
