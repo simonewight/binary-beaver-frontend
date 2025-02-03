@@ -58,14 +58,14 @@ const EditCollectionDialog = ({ open, onOpenChange, collection, onUpdate }) => {
               type="button"
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-400 hover:text-white px-4 py-2"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading || !name.trim()}
-              className="bg-cyan-500 hover:bg-cyan-400 text-white"
+              className="bg-cyan-500 hover:bg-cyan-400 text-white px-4 py-2"
             >
               {isLoading ? 'Saving...' : 'Save Changes'}
             </Button>

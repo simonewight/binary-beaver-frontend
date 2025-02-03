@@ -123,6 +123,8 @@ export const collections = {
     api.post(`/collections/${collectionId}/add_snippet/`, { snippet_id: snippetId }),
   removeSnippet: (collectionId, snippetId) => 
     api.post(`/collections/${collectionId}/remove_snippet/`, { snippet_id: snippetId }),
+  share: (id) => api.post(`/collections/${id}/share/`),
+  getShared: (shareId) => api.get(`/collections/shared/${shareId}/`),
 }
 
 export default api 

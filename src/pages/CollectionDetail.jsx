@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { collections as collectionsApi } from '../services/api'
 import { Button } from '../components/ui/button'
-import { ArrowLeft, Edit, Trash } from 'lucide-react'
+import { ArrowLeft, Edit, Trash, Share2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import StarField from '../components/ui/StarField'
 import SnippetsGrid from '../components/profile/SnippetsGrid'
 import DeleteConfirmDialog from '../components/snippets/DeleteConfirmDialog'
 import EditCollectionDialog from '../components/collections/EditCollectionDialog'
+import ShareCollectionDialog from '../components/collections/ShareCollectionDialog'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '../components/ui/tooltip'
 
 const CollectionDetail = () => {
   const { id } = useParams()
@@ -16,6 +22,7 @@ const CollectionDetail = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
 
   useEffect(() => {
     const loadCollection = async () => {
@@ -89,6 +96,21 @@ const CollectionDetail = () => {
               <p className="text-slate-400">{collection.snippets?.length || 0} snippets</p>
             </div>
             <div className="flex gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:text-cyan-400 transition-colors"
+                    onClick={() => setShareDialogOpen(true)}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Share collection</p>
+                </TooltipContent>
+              </Tooltip>
               <Button
                 variant="ghost"
                 size="sm"
@@ -127,6 +149,13 @@ const CollectionDetail = () => {
           onOpenChange={setEditDialogOpen}
           collection={collection}
           onUpdate={handleUpdate}
+        />
+
+        {/* Share collection dialog */}
+        <ShareCollectionDialog
+          open={shareDialogOpen}
+          onOpenChange={setShareDialogOpen}
+          url={window.location.href}
         />
       </div>
     </div>
