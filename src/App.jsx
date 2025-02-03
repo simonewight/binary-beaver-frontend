@@ -23,6 +23,7 @@ import PageTransition from './components/PageTransition'
 import ResetPassword from './pages/ResetPassword'
 import CollectionDetail from './pages/CollectionDetail'
 import NewSnippet from './pages/NewSnippet'
+import EditSnippet from './pages/EditSnippet'
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
                         <Route path="/snippets" element={<Snippets />} />
                         <Route path="/snippets/new" element={<NewSnippet />} />
                         <Route path="/snippet/:id" element={<SnippetDetail />} />
+                        <Route path="/snippet/:id/edit" element={<EditSnippet />} />
                         <Route path="/collection/:id" element={<CollectionDetail />} />
                       </Route>
                     </Route>

@@ -87,7 +87,10 @@ export const snippets = {
     return response
   },
   create: (data) => api.post('/snippets/', data),
-  update: (id, data) => api.put(`/snippets/${id}/`, data),
+  update: (id, data) => {
+    console.log('Updating snippet:', id, data)
+    return api.put(`/snippets/${id}/`, data)
+  },
   delete: (id) => api.delete(`/snippets/${id}/`),
   like: (id) => api.post(`/snippets/${id}/like/`),
 }

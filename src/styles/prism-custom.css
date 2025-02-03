@@ -18,6 +18,7 @@ pre[class*="language-"] {
   word-break: normal;
   word-wrap: normal;
   line-height: 1.5;
+  font-size: 0.875rem;
   tab-size: 4;
   hyphens: none;
 }
@@ -75,4 +76,104 @@ pre[class*="language-"] {
 .token.important,
 .token.variable {
   color: var(--yellow);
+}
+
+/* Line numbers */
+.line-numbers {
+  counter-reset: line;
+  padding-left: 3.8em;
+  position: relative;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: 0;
+  width: 3em;
+  letter-spacing: -1px;
+  border-right: 1px solid #404040;
+  user-select: none;
+}
+
+.line-numbers-rows > span {
+  display: block;
+  counter-increment: line;
+  pointer-events: none;
+}
+
+.line-numbers-rows > span:before {
+  content: counter(line);
+  color: #64748b;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
+
+/* Code block container */
+pre[class*="language-"] {
+  margin: 0;
+  overflow: auto;
+  padding: 1rem;
+  background-color: transparent !important;
+}
+
+/* Scrollbar styling */
+pre::-webkit-scrollbar {
+  height: 8px;
+  background-color: #1e293b;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background-color: #475569;
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-track {
+  background-color: #1e293b;
+  border-radius: 4px;
+}
+
+/* Code container with max height */
+.code-container {
+  max-height: 500px;
+  position: relative;
+}
+
+.code-container.expanded {
+  max-height: none;
+}
+
+/* Fade effect for long code */
+.code-container:not(.expanded)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, rgb(15 23 42 / 1));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.code-container:not(.expanded):hover::after {
+  opacity: 1;
+}
+
+/* Expand button */
+.expand-button {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.code-container:not(.expanded):hover .expand-button {
+  opacity: 1;
 } 
