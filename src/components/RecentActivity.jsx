@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns'
 const ActivityItem = ({ type, item }) => {
   const isSnippet = type === 'snippet'
   const Icon = isSnippet ? Code : Library
-  const path = isSnippet ? `/snippet/${item.id}` : `/collections/${item.id}`
+  const path = isSnippet ? `/snippet/${item.id}` : `/collection/${item.id}`
 
   return (
     <Link 

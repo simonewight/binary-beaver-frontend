@@ -76,6 +76,13 @@ export const auth = {
   updateProfile: (data) => api.patch('/users/me/', data),
   getStats: () => api.get('/users/me/stats/'),
   getActivity: () => api.get('/users/me/activity/'),
+  updateAvatar: (formData) => {
+    return api.post('/auth/update-avatar/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    })
+  },
 }
 
 // Snippets endpoints

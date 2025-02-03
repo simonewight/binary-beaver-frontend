@@ -237,16 +237,15 @@ const Profile = () => {
               />
             )}
           </div>
+
+          <EditProfileModal
+            user={user}
+            open={showEditModal}
+            onOpenChange={setShowEditModal}
+            onSave={handleProfileUpdate}
+          />
         </div>
       </div>
-
-      {showEditModal && (
-        <EditProfileModal
-          user={user}
-          onClose={() => setShowEditModal(false)}
-          onSave={handleProfileUpdate}
-        />
-      )}
     </div>
   )
 }

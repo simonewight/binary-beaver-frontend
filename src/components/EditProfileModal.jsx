@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Button } from './ui/button'
 import { toast } from 'react-hot-toast'
 import Spinner from './ui/spinner'
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
+import { auth } from '../services/api'
 
 const profileSchema = z.object({
   bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
@@ -12,7 +17,7 @@ const profileSchema = z.object({
   is_public: z.boolean().optional(),
 })
 
-const EditProfileModal = ({ user, onClose, onSave }) => {
+const EditProfileModal = ({ user, onClose, onSave, open, onOpenChange }) => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -22,20 +27,89 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
     }
   })
 
+  const [uploading, setUploading] = useState(false)
+  
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    
+    try {
+      setUploading(true)
+      const formData = new FormData()
+      formData.append('avatar', file)
+      
+      const response = await auth.updateAvatar(formData)
+      
+      if (response.data.success) {
+        onSave({ ...user, avatar_url: response.data.avatar_url })
+        toast.success('Profile picture updated')
+      }
+    } catch (error) {
+      console.error('Failed to upload image:', error)
+      toast.error('Failed to upload image')
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const onSubmit = async (data) => {
     try {
       await onSave(data)
-      onClose()
+      onOpenChange(false)
     } catch (error) {
       toast.error('Failed to update profile')
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-slate-800 p-6 rounded-lg w-full max-w-md">
-        <h2 className="text-xl font-bold text-white mb-4">Edit Profile</h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit Profile</DialogTitle>
+        </DialogHeader>
         
+        {/* Add Avatar Section */}
+        <div className="flex items-center gap-4 mb-4">
+          <Avatar className="h-20 w-20">
+            <AvatarImage src={user.avatar_url} />
+            <AvatarFallback>
+              {user.username[0].toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1">
+            <Label htmlFor="avatar" className="mb-2 block">Profile Picture</Label>
+            <div className="relative">
+              <Input
+                id="avatar"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('avatar').click()}
+                disabled={uploading}
+                className="w-full bg-slate-800/50 backdrop-blur-sm border-slate-700/50 text-white hover:bg-slate-700/50"
+              >
+                {uploading ? (
+                  <div className="flex items-center gap-2">
+                    <Spinner size="sm" />
+                    <span>Uploading...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span>Choose File</span>
+                  </div>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">
@@ -86,14 +160,15 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
             <Button
               type="button"
               variant="outline"
-              onClick={onClose}
-              className="bg-transparent"
+              onClick={() => onOpenChange(false)}
+              className="border-slate-700 text-white hover:bg-slate-800 px-4"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
+              className="bg-cyan-500 text-white hover:bg-cyan-400 px-4 py-2"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
@@ -106,8 +181,8 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

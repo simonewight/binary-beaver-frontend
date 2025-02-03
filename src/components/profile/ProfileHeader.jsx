@@ -1,6 +1,8 @@
 import { User, Mail, MapPin, Globe, Calendar } from 'lucide-react'
 import { Button } from '../ui/button'
 import { formatDate } from '../../lib/utils'
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
+import { getInitials } from '../../lib/utils'
 
 const ProfileHeader = ({ user, onEdit, isLoading }) => {
   if (isLoading) return <ProfileHeaderSkeleton />
@@ -10,9 +12,12 @@ const ProfileHeader = ({ user, onEdit, isLoading }) => {
       <div className="flex flex-col md:flex-row gap-6">
         {/* Avatar Section */}
         <div className="flex-shrink-0">
-          <div className="w-24 h-24 bg-slate-700 rounded-full flex items-center justify-center">
-            <User className="w-12 h-12 text-slate-400" />
-          </div>
+          <Avatar className="h-20 w-20">
+            <AvatarImage src={user.avatar_url} />
+            <AvatarFallback username={user.username}>
+              {getInitials(user.username)}
+            </AvatarFallback>
+          </Avatar>
         </div>
 
         {/* Info Section */}
