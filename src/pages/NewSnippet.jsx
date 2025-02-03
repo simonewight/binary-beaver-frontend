@@ -1,102 +1,57 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '../components/ui/button'
 import { snippets as snippetsApi } from '../services/api'
 import { toast } from 'react-hot-toast'
+import { Button } from '../components/ui/button'
+import { ArrowLeft } from 'lucide-react'
+import StarField from '../components/ui/StarField'
+import SnippetForm from '../components/snippets/SnippetForm'
 
 const NewSnippet = () => {
   const navigate = useNavigate()
-  const [title, setTitle] = useState('')
-  const [code, setCode] = useState('')
-  const [language, setLanguage] = useState('python')
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
+  const handleSubmit = async (formData) => {
     try {
-      const response = await snippetsApi.create({
-        title,
-        code,
-        language
-      })
+      console.log('Submitting new snippet:', formData)
+      const response = await snippetsApi.create(formData)
+      console.log('Create response full:', response)
       
-      toast.success('Snippet created successfully!')
-      navigate(`/snippet/${response.data.id}`)
+      const snippetId = response.data.data.id
+      console.log('Extracted snippet ID:', snippetId)
+      
+      if (snippetId) {
+        toast.success('Snippet created successfully')
+        console.log('Navigating to:', `/snippet/${snippetId}`)
+        navigate(`/snippet/${snippetId}`)
+      } else {
+        console.error('No snippet ID in response. Full response data:', response.data)
+        toast.error('Error creating snippet')
+        navigate('/profile')
+      }
     } catch (error) {
+      console.error('Failed to create snippet:', error)
       toast.error('Failed to create snippet')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-white mb-6">Create New Snippet</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              required
-            />
-          </div>
+    <div className="relative min-h-screen bg-slate-900">
+      <StarField />
+      <div className="relative z-10 max-w-4xl mx-auto p-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-slate-300 hover:text-white mb-4"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Language
-            </label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            >
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-              <option value="html">HTML</option>
-              <option value="css">CSS</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Code
-            </label>
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              rows={10}
-              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate(-1)}
-              className="text-white border-slate-700"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-cyan-500 text-white hover:bg-cyan-400"
-            >
-              {isSubmitting ? 'Creating...' : 'Create Snippet'}
-            </Button>
-          </div>
-        </form>
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6 border border-slate-700/50">
+          <h1 className="text-2xl font-bold text-white mb-6">Create New Snippet</h1>
+          <SnippetForm onSubmit={handleSubmit} />
+        </div>
       </div>
     </div>
   )

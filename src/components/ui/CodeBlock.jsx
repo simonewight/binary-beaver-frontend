@@ -17,7 +17,12 @@ import 'prismjs/components/prism-json'
 import 'prismjs/components/prism-java'
 import 'prismjs/components/prism-sql'
 import 'prismjs/components/prism-bash'
-import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from './tooltip'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider
+} from '../ui/tooltip'
 
 const CodeBlock = ({ code, language }) => {
   const [copied, setCopied] = useState(false)
@@ -78,7 +83,7 @@ const CodeBlock = ({ code, language }) => {
 
         {/* Action buttons with tooltips */}
         <div className="absolute top-2 right-16 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-          <TooltipRoot>
+          <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
@@ -92,9 +97,9 @@ const CodeBlock = ({ code, language }) => {
             <TooltipContent>
               <p>View Raw Code</p>
             </TooltipContent>
-          </TooltipRoot>
+          </Tooltip>
 
-          <TooltipRoot>
+          <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
@@ -112,7 +117,7 @@ const CodeBlock = ({ code, language }) => {
             <TooltipContent>
               <p>{copied ? 'Copied!' : 'Copy Code'}</p>
             </TooltipContent>
-          </TooltipRoot>
+          </Tooltip>
         </div>
 
         <div className={`code-container ${expanded ? 'expanded' : ''}`}>

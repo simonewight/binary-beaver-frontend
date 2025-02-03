@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { snippets as snippetsApi } from '../services/api'
 import { Button } from '../components/ui/button'
-import { Heart, Star, User, Clock, Globe, Copy, ArrowLeft, Edit, Trash } from 'lucide-react'
+import { Heart, Star, User, Clock, Globe, Copy, ArrowLeft, Edit, Trash, Share2, FolderPlus } from 'lucide-react'
 import { formatDate } from '../lib/utils'
 import { toast } from 'react-hot-toast'
 import StarField from '../components/ui/StarField'
 import { useAuth } from '../context/AuthContext'
 import CodeBlock from '../components/ui/CodeBlock'
+import DeleteConfirmDialog from '../components/snippets/DeleteConfirmDialog'
+import { Tooltip, TooltipTrigger, TooltipContent } from '../components/ui/tooltip'
+import ShareDialog from '../components/snippets/ShareDialog'
+import SaveToCollectionDialog from '../components/snippets/SaveToCollectionDialog'
 
 const SnippetDetail = () => {
   const { id } = useParams()
@@ -15,6 +19,9 @@ const SnippetDetail = () => {
   const { user } = useAuth()
   const [snippet, setSnippet] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
+  const [saveToCollectionOpen, setSaveToCollectionOpen] = useState(false)
 
   useEffect(() => {
     const loadSnippet = async () => {
@@ -66,16 +73,18 @@ const SnippetDetail = () => {
   }
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this snippet?')) {
-      try {
-        await snippetsApi.delete(id)
-        toast.success('Snippet deleted')
-        navigate('/profile')
-      } catch (error) {
-        console.error('Failed to delete snippet:', error)
-        toast.error('Failed to delete snippet')
-      }
+    try {
+      await snippetsApi.delete(id)
+      toast.success('Snippet deleted')
+      navigate('/profile')
+    } catch (error) {
+      console.error('Failed to delete snippet:', error)
+      toast.error('Failed to delete snippet')
     }
+  }
+
+  const handleShare = () => {
+    setShareDialogOpen(true)
   }
 
   if (isLoading) {
@@ -134,41 +143,100 @@ const SnippetDetail = () => {
             <div className="flex gap-2">
               {user?.id === snippet.owner.id && (
                 <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-white hover:text-cyan-400 transition-colors"
+                        onClick={() => navigate(`/snippet/${id}/edit`)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit snippet</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-white hover:text-red-400 transition-colors"
+                        onClick={() => setDeleteDialogOpen(true)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Delete snippet</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </>
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="text-white hover:text-cyan-400 transition-colors"
-                    onClick={() => navigate(`/snippet/${id}/edit`)}
+                    onClick={handleShare}
                   >
-                    <Edit className="h-4 w-4" />
+                    <Share2 className="h-4 w-4" />
                   </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Share snippet URL</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-white hover:text-red-400 transition-colors"
-                    onClick={handleDelete}
+                    className="text-white hover:text-cyan-400 transition-colors"
+                    onClick={() => setSaveToCollectionOpen(true)}
                   >
-                    <Trash className="h-4 w-4" />
+                    <FolderPlus className="h-4 w-4" />
                   </Button>
-                </>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:text-cyan-400 transition-colors"
-                onClick={handleLike}
-              >
-                <Heart className={`h-4 w-4 ${snippet.is_liked ? 'fill-cyan-400 text-cyan-400' : ''}`} />
-                <span className="ml-1">{snippet.likes_count}</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:text-cyan-400 transition-colors"
-                onClick={handleCopy}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Save to collection</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:text-cyan-400 transition-colors"
+                    onClick={handleLike}
+                  >
+                    <Heart className={`h-4 w-4 ${snippet.is_liked ? 'fill-cyan-400 text-cyan-400' : ''}`} />
+                    <span className="ml-1">{snippet.likes_count}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{snippet.is_liked ? 'Unlike snippet' : 'Like snippet'}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:text-cyan-400 transition-colors"
+                    onClick={handleCopy}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copy code to clipboard</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
 
@@ -198,6 +266,23 @@ const SnippetDetail = () => {
           </div>
         </div>
       </div>
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDelete}
+        title="Delete Snippet"
+        description="Are you sure you want to delete this snippet? This action cannot be undone."
+      />
+      <ShareDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        url={window.location.href}
+      />
+      <SaveToCollectionDialog
+        open={saveToCollectionOpen}
+        onOpenChange={setSaveToCollectionOpen}
+        snippetId={id}
+      />
     </div>
   )
 }

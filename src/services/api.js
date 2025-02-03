@@ -86,7 +86,19 @@ export const snippets = {
     console.log('API Response for snippet:', response)
     return response
   },
-  create: (data) => api.post('/snippets/', data),
+  create: (data) => {
+    console.log('Creating snippet with data:', data)
+    return api.post('/snippets/', data).then(response => {
+      console.log('Create snippet response full:', response)
+      if (!response.data?.data?.id) {
+        console.error('No ID in snippet response. Full response data:', response.data)
+      }
+      return response
+    }).catch(error => {
+      console.error('Create snippet error:', error.response || error)
+      throw error
+    })
+  },
   update: (id, data) => {
     console.log('Updating snippet:', id, data)
     return api.put(`/snippets/${id}/`, data)
@@ -97,13 +109,20 @@ export const snippets = {
 
 // Collections endpoints
 export const collections = {
-  getAll: () => api.get('/collections/'),
+  getAll: () => {
+    return api.get('/collections/').then(response => {
+      console.log('Collections response:', response.data) // Debug log
+      return response
+    })
+  },
   get: (id) => api.get(`/collections/${id}/`),
   create: (data) => api.post('/collections/', data),
   update: (id, data) => api.put(`/collections/${id}/`, data),
   delete: (id) => api.delete(`/collections/${id}/`),
-  addSnippet: (id, snippetId) => api.post(`/collections/${id}/add_snippet/`, { snippet_id: snippetId }),
-  removeSnippet: (id, snippetId) => api.post(`/collections/${id}/remove_snippet/`, { snippet_id: snippetId }),
+  addSnippet: (collectionId, snippetId) => 
+    api.post(`/collections/${collectionId}/add_snippet/`, { snippet_id: snippetId }),
+  removeSnippet: (collectionId, snippetId) => 
+    api.post(`/collections/${collectionId}/remove_snippet/`, { snippet_id: snippetId }),
 }
 
 export default api 

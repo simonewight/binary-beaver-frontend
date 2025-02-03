@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import { Toaster } from 'react-hot-toast'
 import ProtectedRoute from './components/ProtectedRoute'
 import StarField from './components/ui/StarField'
+import { TooltipProvider } from './components/ui/tooltip'
 
 // Import pages (we'll create these next)
 import PrivateRoute from './components/PrivateRoute'
@@ -29,51 +30,53 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <div className="relative">
-          <StarField />
-          <div className="relative z-20">
-            <Toaster />
-            <Router>
-              <ToastProvider />
-              <AnimatePresence mode="wait">
-                <div className="app min-h-screen bg-gray-50">
-                  <Routes>
-                    {/* Public routes */}
-                    <Route path="/login" element={
-                      <PageTransition>
-                        <Login />
-                      </PageTransition>
-                    } />
-                    <Route path="/register" element={
-                      <PageTransition>
-                        <Register />
-                      </PageTransition>
-                    } />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    
-                    {/* Protected routes */}
-                    <Route element={<Layout />}>
-                      <Route element={<ProtectedRoute />}>
-                        <Route path="/" element={
-                          <PageTransition>
-                            <Home />
-                          </PageTransition>
-                        } />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/collections" element={<Collections />} />
-                        <Route path="/snippets" element={<Snippets />} />
-                        <Route path="/snippets/new" element={<NewSnippet />} />
-                        <Route path="/snippet/:id" element={<SnippetDetail />} />
-                        <Route path="/snippet/:id/edit" element={<EditSnippet />} />
-                        <Route path="/collection/:id" element={<CollectionDetail />} />
+        <TooltipProvider>
+          <div className="relative">
+            <StarField />
+            <div className="relative z-20">
+              <Toaster />
+              <Router>
+                <ToastProvider />
+                <AnimatePresence mode="wait">
+                  <div className="app min-h-screen bg-gray-50">
+                    <Routes>
+                      {/* Public routes */}
+                      <Route path="/login" element={
+                        <PageTransition>
+                          <Login />
+                        </PageTransition>
+                      } />
+                      <Route path="/register" element={
+                        <PageTransition>
+                          <Register />
+                        </PageTransition>
+                      } />
+                      <Route path="/reset-password" element={<ResetPassword />} />
+                      
+                      {/* Protected routes */}
+                      <Route element={<Layout />}>
+                        <Route element={<ProtectedRoute />}>
+                          <Route path="/" element={
+                            <PageTransition>
+                              <Home />
+                            </PageTransition>
+                          } />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/collections" element={<Collections />} />
+                          <Route path="/snippets" element={<Snippets />} />
+                          <Route path="/snippets/new" element={<NewSnippet />} />
+                          <Route path="/snippet/:id" element={<SnippetDetail />} />
+                          <Route path="/snippet/:id/edit" element={<EditSnippet />} />
+                          <Route path="/collection/:id" element={<CollectionDetail />} />
+                        </Route>
                       </Route>
-                    </Route>
-                  </Routes>
-                </div>
-              </AnimatePresence>
-            </Router>
+                    </Routes>
+                  </div>
+                </AnimatePresence>
+              </Router>
+            </div>
           </div>
-        </div>
+        </TooltipProvider>
       </AuthProvider>
     </ErrorBoundary>
   )
