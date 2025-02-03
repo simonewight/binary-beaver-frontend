@@ -5,10 +5,14 @@ import { Button } from '../components/ui/button'
 import Spinner from '../components/ui/spinner'
 import { toast } from 'react-hot-toast'
 import EditProfileModal from '../components/EditProfileModal'
-import { auth } from '../services/api'
-import Skeleton from '../components/ui/skeleton'
-import { SkeletonCard } from '../components/ui/skeleton'
+import { auth, snippets as snippetsApi } from '../services/api'
+import { Skeleton, SkeletonCard } from '../components/ui/skeleton'
 import RecentActivity from '../components/RecentActivity'
+import ProfileHeader from '../components/profile/ProfileHeader'
+import StatsGrid from '../components/profile/StatsGrid'
+import SnippetsGrid from '../components/profile/SnippetsGrid'
+import { useNavigate } from 'react-router-dom'
+import StarField from '../components/ui/StarField'
 
 const StatCard = ({ icon: Icon, label, value }) => (
   <div className="bg-slate-800 p-4 rounded-lg flex items-center gap-3">
@@ -23,6 +27,7 @@ const StatCard = ({ icon: Icon, label, value }) => (
 )
 
 const Profile = () => {
+  const navigate = useNavigate()
   const { user, setUser } = useAuth()
   const [isProfileLoading, setIsProfileLoading] = useState(true)
   const [isStatsLoading, setIsStatsLoading] = useState(true)
@@ -30,6 +35,8 @@ const Profile = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [activity, setActivity] = useState({ snippets: [], collections: [] })
   const [isActivityLoading, setIsActivityLoading] = useState(true)
+  const [snippets, setSnippets] = useState([])
+  const [isSnippetsLoading, setIsSnippetsLoading] = useState(true)
 
   const loadProfileData = async () => {
     try {
@@ -78,12 +85,37 @@ const Profile = () => {
     }
   }
 
+  const loadSnippets = async () => {
+    try {
+      setIsSnippetsLoading(true)
+      console.log('Fetching snippets for user:', user.id)
+      const response = await snippetsApi.getAll({ owner: user.id })
+      
+      // The data structure is:
+      // { success: true, results: [...snippets], links: { next, previous } }
+      if (response.data.success && Array.isArray(response.data.results)) {
+        setSnippets(response.data.results)
+      } else {
+        console.error('Unexpected snippets data structure:', response.data)
+        setSnippets([])
+      }
+    } catch (error) {
+      console.error('Failed to load snippets:', error)
+      toast.error('Failed to load snippets')
+    } finally {
+      setIsSnippetsLoading(false)
+    }
+  }
+
   useEffect(() => {
     console.log('Current user:', user)  // Debug log
     loadProfileData()
     loadStats()
     loadActivity()
-  }, [])
+    if (user?.id) {  // Changed this condition to check for user.id
+      loadSnippets()
+    }
+  }, [user?.id])  // Added user?.id as dependency
 
   const handleProfileUpdate = async (data) => {
     try {
@@ -139,60 +171,73 @@ const Profile = () => {
 
   if (isProfileLoading) {
     return (
-      <div className="flex justify-center items-center h-[calc(100vh-4rem)]">
-        <Spinner size="lg" />
+      <div className="relative min-h-screen bg-slate-900">
+        <StarField />
+        <div className="flex justify-center items-center h-[calc(100vh-4rem)] relative z-10">
+          <Spinner size="lg" />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-slate-800 rounded-lg p-6 mb-6">
-        <h1 className="text-2xl font-bold text-white mb-4">Profile</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-200">User Info</h2>
-            <p className="text-slate-400">Username: {user?.username}</p>
-            <p className="text-slate-400">Email: {user?.email}</p>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-200">Stats</h2>
-            <p className="text-slate-400">Snippets: {stats?.snippets_count || 0}</p>
-            <p className="text-slate-400">Collections: {stats?.collections_count || 0}</p>
-            <p className="text-slate-400">Likes Received: {stats?.likes_received || 0}</p>
-            <p className="text-slate-400">Likes Given: {stats?.likes_given || 0}</p>
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button onClick={() => setShowEditModal(true)}>
-            Edit Profile
-          </Button>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-slate-800 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">Recent Activity</h2>
-        {isActivityLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="bg-slate-700 rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-8 w-8 rounded-md" />
-                  <div className="flex-1">
-                    <Skeleton className="h-5 w-48" />
-                    <Skeleton className="h-4 w-24 mt-2" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <RecentActivity 
-            snippets={activity.snippets}
-            collections={activity.collections}
+    <div className="relative min-h-screen bg-slate-900">
+      <StarField />
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto p-6">
+          <ProfileHeader 
+            user={user}
+            onEdit={() => setShowEditModal(true)}
+            isLoading={isProfileLoading}
           />
-        )}
+          
+          <StatsGrid 
+            stats={stats}
+            isLoading={isStatsLoading}
+          />
+
+          {/* Snippets Section */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6 mb-6 border border-slate-700/50">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-white">My Snippets</h2>
+              <Button 
+                onClick={() => navigate('/snippets/new')}
+                className="bg-cyan-500 text-white hover:bg-cyan-400 transition-colors px-8 py-2.5"
+              >
+                New Snippet
+              </Button>
+            </div>
+            <SnippetsGrid 
+              snippets={snippets}
+              isLoading={isSnippetsLoading}
+            />
+          </div>
+
+          {/* Recent Activity */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6 border border-slate-700/50">
+            <h2 className="text-xl font-semibold text-white mb-4">Recent Activity</h2>
+            {isActivityLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-slate-700 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <div className="flex-1">
+                        <Skeleton className="h-5 w-48" />
+                        <Skeleton className="h-4 w-24 mt-2" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <RecentActivity 
+                snippets={activity.snippets}
+                collections={activity.collections}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       {showEditModal && (

@@ -81,7 +81,11 @@ export const auth = {
 // Snippets endpoints
 export const snippets = {
   getAll: (params) => api.get('/snippets/', { params }),
-  get: (id) => api.get(`/snippets/${id}/`),
+  get: async (id) => {
+    const response = await api.get(`/snippets/${id}/`)
+    console.log('API Response for snippet:', response)
+    return response
+  },
   create: (data) => api.post('/snippets/', data),
   update: (id, data) => api.put(`/snippets/${id}/`, data),
   delete: (id) => api.delete(`/snippets/${id}/`),

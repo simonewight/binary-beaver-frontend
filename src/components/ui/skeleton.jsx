@@ -1,10 +1,9 @@
-import React from 'react'
 import { cn } from "../../lib/utils"
 
 const Skeleton = ({ className, ...props }) => {
   return (
     <div
-      className={cn("animate-shimmer bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800", className)}
+      className={cn("animate-pulse rounded-md bg-slate-700", className)}
       {...props}
     />
   )
@@ -38,4 +37,4 @@ const SkeletonCard = () => {
   )
 }
 
-export { Skeleton as default, SkeletonCard } 
+export { Skeleton, SkeletonCard } 

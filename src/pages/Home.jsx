@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 import { Search, Star, Heart, User } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import StarField from '../components/ui/StarField'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -12,8 +13,10 @@ const Home = () => {
 
   return (
     <div className="bg-slate-900 min-h-screen">
+      <StarField />
+      <div className="relative z-10">
       {/* Hero Section */}
-      <div className="pt-20 pb-16 text-center bg-slate-900">
+      <div className="pt-20 pb-16 text-center">
         <h1 className="text-6xl font-extrabold text-white mb-6">
           Build. Share. Play with Code.
         </h1>
@@ -23,7 +26,7 @@ const Home = () => {
         <div className="flex justify-center gap-4">
           <Button 
             size="lg" 
-            className="bg-white text-slate-900 hover:bg-slate-100"
+            className="bg-white text-slate-900 hover:bg-slate-100 px-8 py-3"
             onClick={() => navigate(user ? '/profile' : '/register')}
           >
             {user ? 'Start Coding Now' : 'Get Started'}
@@ -31,7 +34,7 @@ const Home = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="text-white border-white"
+            className="text-white border-white px-8 py-3"
             onClick={() => navigate('/snippets')}
           >
             Explore Blox
@@ -97,13 +100,14 @@ const Home = () => {
             <Button
               key={category}
               variant="outline"
-              className="h-24 text-white border-slate-700 hover:bg-slate-800"
+              className="h-24 text-white border-slate-700 hover:bg-slate-800/50 bg-slate-800/30"
             >
               {category}
             </Button>
           ))}
         </div>
       </div>
+    </div>
     </div>
   )
 }

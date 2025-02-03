@@ -46,7 +46,7 @@ const WarpSpeed = ({ className = '' }) => {
       }
       
       if (warpRef.current === 0) {
-        c.fillStyle = 'rgba(0,10,20,1)'
+        c.fillStyle = 'rgba(15, 23, 42, 1)'
         c.fillRect(0, 0, canvas.width, canvas.height)
       }
       
@@ -55,7 +55,7 @@ const WarpSpeed = ({ className = '' }) => {
         const pixelY = (star.y - centerY) * (focalLength / star.z) + centerY
         const pixelRadius = 1 * (focalLength / star.z)
         
-        c.fillStyle = `rgba(209, 255, 255, ${star.o})`
+        c.fillStyle = `rgba(103, 232, 249, ${star.o})`
         c.fillRect(pixelX, pixelY, pixelRadius, pixelRadius)
       })
     }
@@ -92,8 +92,8 @@ const WarpSpeed = ({ className = '' }) => {
         onClick={toggleWarp}
         className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 px-6 py-3 
                  text-cyan-100 border-2 border-cyan-100 font-bold text-lg
-                 hover:shadow-[0_0_10px_#eef,0_0_12px_#a0cdff_inset]
-                 hover:text-shadow-[0_0_12px_#489cfa,0_0_5px_#fff]
+                 hover:shadow-[0_0_10px_#67e8f9,0_0_12px_#67e8f9_inset]
+                 hover:text-shadow-[0_0_12px_#67e8f9,0_0_5px_#fff]
                  transition-all duration-200 bg-black/80"
       >
         WARP SPEED

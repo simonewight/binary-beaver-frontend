@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { snippets } from '../services/api'
 import SnippetCard from '../components/SnippetCard'
-import SkeletonCard from '../components/ui/skeleton'
+import { Skeleton } from '../components/ui/skeleton'
 import { Search } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -96,7 +96,7 @@ const Snippets = () => {
         {loading && page === 1 ? (
           // Initial loading state
           Array(6).fill(0).map((_, index) => (
-            <SkeletonCard key={index} />
+            <Skeleton key={index} />
           ))
         ) : (
           // Loaded snippets

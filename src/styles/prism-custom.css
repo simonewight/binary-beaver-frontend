@@ -1,0 +1,78 @@
+/* Override Prism.js theme colors to match our design */
+:root {
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --yellow: #fbbf24;
+  --green: #34d399;
+  --red: #f87171;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #e2e8f0;
+  background: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #64748b;
+}
+
+.token.punctuation {
+  color: #94a3b8;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: var(--red);
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: var(--green);
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: var(--yellow);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: var(--cyan);
+}
+
+.token.function,
+.token.class-name {
+  color: var(--purple);
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: var(--yellow);
+} 

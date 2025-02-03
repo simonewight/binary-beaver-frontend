@@ -9,34 +9,37 @@ const Layout = () => {
   console.log('Layout rendering:', { user })
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Navigation will be shared across all pages */}
-      <nav className="bg-slate-800 border-b border-slate-700">
+    <div className="min-h-screen">
+      {/* Add z-30 to ensure nav is above stars */}
+      <nav className="relative z-30 bg-slate-900 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="text-2xl font-bold text-white hover:text-slate-200 transition-colors">
-              Code Blox
-            </Link>
-            <div className="flex gap-4">
+          <div className="flex justify-between h-16">
+            <div className="flex">
+              <Link to="/" className="flex items-center">
+                <img src="/logo.png" alt="Logo" className="h-8 w-8" />
+                <span className="ml-2 text-white font-bold">Code Blox</span>
+              </Link>
+            </div>
+            <div className="flex items-center gap-6">
               {user ? (
                 <>
                   <Button 
                     variant="ghost" 
-                    className="text-white"
+                    className="text-white px-4"
                     onClick={() => navigate('/profile')}
                   >
                     Profile
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="text-white"
+                    className="text-white px-4"
                     onClick={() => navigate('/collections')}
                   >
                     Collections
                   </Button>
                   <Button 
                     variant="ghost" 
-                    className="text-white"
+                    className="text-white px-4"
                     onClick={() => {
                       logout()
                       navigate('/')
@@ -49,13 +52,13 @@ const Layout = () => {
                 <>
                   <Button 
                     variant="ghost" 
-                    className="text-white"
+                    className="text-white px-4"
                     onClick={() => navigate('/login')}
                   >
                     Sign In
                   </Button>
                   <Button 
-                    className="bg-white text-slate-900 hover:bg-slate-100"
+                    className="bg-white text-slate-900 hover:bg-slate-100 px-6"
                     onClick={() => navigate('/register')}
                   >
                     Get Started
@@ -67,8 +70,10 @@ const Layout = () => {
         </div>
       </nav>
 
-      {/* Page content will be rendered here */}
-      <Outlet />
+      {/* Content */}
+      <main>
+        <Outlet />
+      </main>
     </div>
   )
 }
