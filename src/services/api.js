@@ -1,12 +1,14 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8000/api'  // Verify this matches your backend URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
+  withCredentials: false  // Change this to false for JWT
 })
 
 // Add auth token to requests

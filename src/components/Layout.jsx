@@ -17,10 +17,7 @@ const Layout = () => {
           <div className="flex justify-between h-16">
             <div className="flex">
               <Link to="/" className="flex items-center">
-                <div className="flex items-center gap-2">
-                  <Logo size={27} />
-                  <span className="text-xl font-semibold text-white">Code Blox</span>
-                </div>
+                <Logo size={27} />
               </Link>
             </div>
             <div className="flex items-center gap-6">

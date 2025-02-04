@@ -8,11 +8,23 @@ const Logo = ({ size = 27 }) => {
   }
 
   return (
-    <div className="logo-container" style={style}>
-      <div className="logo-square"></div>
-      <div className="logo-square"></div>
-      <div className="logo-square"></div>
-      <div className="logo-square"></div>
+    <div className="flex items-center gap-2">
+      <div className="logo-container" style={style}>
+        <div className="logo-square"></div>
+        <div className="logo-square"></div>
+        <div className="logo-square"></div>
+        <div className="logo-square"></div>
+      </div>
+      <span 
+        className="text-xl font-bold tracking-tight" 
+        style={{ 
+          fontFamily: 'JetBrains Mono',
+          color: '#06b6d4', // Match the logo color
+          textShadow: '0 0 10px rgba(6, 182, 212, 0.3)' // Subtle glow effect
+        }}
+      >
+        Code Blox
+      </span>
     </div>
   )
 }
