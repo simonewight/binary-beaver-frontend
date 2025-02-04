@@ -141,15 +141,15 @@ export const auth = {
 
 // Snippets endpoints
 export const snippets = {
-  getAll: (params) => api.get('/snippets/', { params }),
+  getAll: (params) => api.get('snippets/', { params }),
   get: async (id) => {
-    const response = await api.get(`/snippets/${id}/`)
+    const response = await api.get(`snippets/${id}/`)
     console.log('API Response for snippet:', response)
     return response
   },
   create: (data) => {
     console.log('Creating snippet with data:', data)
-    return api.post('/snippets/', data).then(response => {
+    return api.post('snippets/', data).then(response => {
       console.log('Create snippet response full:', response)
       if (!response.data?.data?.id) {
         console.error('No ID in snippet response. Full response data:', response.data)
@@ -162,24 +162,15 @@ export const snippets = {
   },
   update: (id, data) => {
     console.log('Updating snippet:', id, data)
-    return api.put(`/snippets/${id}/`, data)
+    return api.put(`snippets/${id}/`, data)
   },
-  delete: (id) => api.delete(`/snippets/${id}/`),
+  delete: (id) => api.delete(`snippets/${id}/`),
   like: async (id) => {
     try {
       console.log('Sending like request for snippet:', id)
-      const response = await api.post(`/snippets/${id}/like/`)
+      const response = await api.post(`snippets/${id}/like/`)
       console.log('Like response:', response.data)
-      
-      if (response.data.success) {
-        return {
-          success: true,
-          is_liked: response.data.data.is_liked,
-          likes_count: response.data.data.likes_count
-        }
-      } else {
-        throw new Error(response.data.message)
-      }
+      return response.data
     } catch (error) {
       console.error('Error liking snippet:', error.response?.data || error)
       throw error
