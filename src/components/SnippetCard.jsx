@@ -68,8 +68,10 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
           <Button 
             variant="ghost" 
             size="sm" 
-            className={`text-cyan-500 hover:text-cyan-400 ${
-              isLiked ? 'text-red-500' : 'text-slate-400 hover:text-red-500'
+            className={`hover:bg-transparent ${
+              isLiked 
+                ? 'text-cyan-500 hover:text-cyan-400' 
+                : 'text-slate-400 hover:text-cyan-500'
             }`}
             onClick={(e) => {
               e.stopPropagation()
