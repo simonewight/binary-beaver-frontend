@@ -11,10 +11,9 @@ import CodePreview from './ui/CodePreview'
 const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const [snippet, setSnippet] = useState(initialSnippet)
   const [isLiking, setIsLiking] = useState(false)
-  const [localLikes, setLocalLikes] = useState(snippet.likes_count || 0)
-  const [isLiked, setIsLiked] = useState(snippet.is_liked || false)
+  const [localLikes, setLocalLikes] = useState(initialSnippet.likes_count || 0)
+  const [isLiked, setIsLiked] = useState(initialSnippet.is_liked || false)
 
   const handleLike = async (e) => {
     e.stopPropagation()
@@ -25,7 +24,7 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
 
     try {
       setIsLiking(true)
-      const response = await snippets.like(snippet.id)
+      const response = await snippets.like(initialSnippet.id)
       
       if (response.success) {
         setIsLiked(response.is_liked)
@@ -33,7 +32,7 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
         
         if (onLikeUpdate) {
           onLikeUpdate({
-            ...snippet,
+            ...initialSnippet,
             is_liked: response.is_liked,
             likes_count: response.likes_count
           })
@@ -52,15 +51,15 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   return (
     <Card 
       className="bg-slate-800 border-slate-700 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg"
-      onClick={() => navigate(`/snippet/${snippet.id}`)}
+      onClick={() => navigate(`/snippet/${initialSnippet.id}`)}
     >
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-lg font-medium text-white">{snippet.title}</h3>
+            <h3 className="text-lg font-medium text-white">{initialSnippet.title}</h3>
             <div className="flex gap-2 mt-1">
-              <span className="text-slate-300 text-sm">{snippet.language}</span>
-              {snippet.tags?.map(tag => (
+              <span className="text-slate-300 text-sm">{initialSnippet.language}</span>
+              {initialSnippet.tags?.map(tag => (
                 <span key={tag} className="text-slate-300 text-sm">• {tag}</span>
               ))}
             </div>
@@ -84,8 +83,8 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
         </div>
         <div className="bg-slate-900 rounded-lg overflow-hidden">
           <CodePreview 
-            code={snippet.code_content}
-            language={snippet.language}
+            code={initialSnippet.code_content}
+            language={initialSnippet.language}
           />
         </div>
         <div className="flex justify-between items-center mt-4">
@@ -93,7 +92,7 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
             <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
               <User className="h-4 w-4 text-white" />
             </div>
-            <span className="text-slate-300 text-sm">@{snippet.owner.username}</span>
+            <span className="text-slate-300 text-sm">@{initialSnippet.owner.username}</span>
           </div>
           <div className="flex items-center gap-2 text-slate-300">
             <Star className="h-4 w-4" />
