@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
@@ -14,6 +14,11 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   const [isLiking, setIsLiking] = useState(false)
   const [localLikes, setLocalLikes] = useState(initialSnippet.likes_count || 0)
   const [isLiked, setIsLiked] = useState(initialSnippet.is_liked || false)
+
+  useEffect(() => {
+    setLocalLikes(initialSnippet.likes_count || 0)
+    setIsLiked(initialSnippet.is_liked || false)
+  }, [initialSnippet])
 
   const handleLike = async (e) => {
     e.stopPropagation()

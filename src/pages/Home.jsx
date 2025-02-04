@@ -41,6 +41,16 @@ const Home = () => {
     navigate(`/snippets?language=${language.toLowerCase()}`)
   }
 
+  const handleLikeUpdate = (updatedSnippet) => {
+    setFeaturedSnippets(currentSnippets => 
+      currentSnippets.map(snippet => 
+        snippet.id === updatedSnippet.id 
+          ? { ...snippet, ...updatedSnippet }
+          : snippet
+      )
+    )
+  }
+
   return (
     <div className="bg-slate-900 min-h-screen">
       <StarField />
@@ -86,11 +96,7 @@ const Home = () => {
               <SnippetCard
                 key={snippet.id}
                 snippet={snippet}
-                onLikeUpdate={(updatedSnippet) => {
-                  setFeaturedSnippets(prev =>
-                    prev.map(s => s.id === updatedSnippet.id ? updatedSnippet : s)
-                  )
-                }}
+                onLikeUpdate={handleLikeUpdate}
               />
             ))
           )}
