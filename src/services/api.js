@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+console.log('API_BASE_URL:', API_BASE_URL)
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -92,24 +93,25 @@ api.interceptors.response.use(
 // Auth endpoints
 export const auth = {
   login: (credentials) => {
-    return api.post('/auth/login/', {
+    console.log('Login request to:', `${API_BASE_URL}/auth/login/`)
+    return api.post('auth/login/', {
       username: credentials.username,
       password: credentials.password
     })
   },
   register: async (userData) => {
     try {
-      console.log('Registering with data:', userData) // Debug log
-      const response = await api.post('/auth/registration/', userData)
-      console.log('Registration response:', response.data) // Debug log
+      console.log('Registering with data:', userData)
+      const response = await api.post('auth/registration/', userData)
+      console.log('Registration response:', response.data)
       
       if (response.data.access) {
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         
         // Get the full user profile after registration
-        const profileResponse = await api.get('/users/me/')
-        console.log('Profile after registration:', profileResponse.data) // Debug log
+        const profileResponse = await api.get('users/me/')
+        console.log('Profile after registration:', profileResponse.data)
         
         return {
           ...response,
@@ -122,12 +124,12 @@ export const auth = {
       throw error
     }
   },
-  refreshToken: () => api.post('/auth/token/refresh/'),
-  logout: () => api.post('/auth/logout/'),
-  getProfile: () => api.get('/users/me/'),
-  updateProfile: (data) => api.patch('/users/me/', data),
-  getStats: () => api.get('/users/me/stats/'),
-  getActivity: () => api.get('/users/me/activity/'),
+  refreshToken: () => api.post('auth/token/refresh/'),
+  logout: () => api.post('auth/logout/'),
+  getProfile: () => api.get('users/me/'),
+  updateProfile: (data) => api.patch('users/me/', data),
+  getStats: () => api.get('users/me/stats/'),
+  getActivity: () => api.get('users/me/activity/'),
   updateAvatar: (formData) => {
     return api.post('/auth/update-avatar/', formData, {
       headers: {
