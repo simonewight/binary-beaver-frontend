@@ -66,7 +66,7 @@ api.interceptors.response.use(
           return Promise.reject(error)
         }
 
-        const response = await api.post('/auth/token/refresh/', {
+        const response = await api.post('auth/token/refresh/', {
           refresh: refreshToken
         })
 
@@ -131,7 +131,7 @@ export const auth = {
   getStats: () => api.get('users/me/stats/'),
   getActivity: () => api.get('users/me/activity/'),
   updateAvatar: (formData) => {
-    return api.post('/auth/update-avatar/', formData, {
+    return api.post('auth/update-avatar/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       }
@@ -149,16 +149,7 @@ export const snippets = {
   },
   create: (data) => {
     console.log('Creating snippet with data:', data)
-    return api.post('snippets/', data).then(response => {
-      console.log('Create snippet response full:', response)
-      if (!response.data?.data?.id) {
-        console.error('No ID in snippet response. Full response data:', response.data)
-      }
-      return response
-    }).catch(error => {
-      console.error('Create snippet error:', error.response || error)
-      throw error
-    })
+    return api.post('snippets/', data)
   },
   update: (id, data) => {
     console.log('Updating snippet:', id, data)
@@ -170,7 +161,13 @@ export const snippets = {
       console.log('Sending like request for snippet:', id)
       const response = await api.post(`snippets/${id}/like/`)
       console.log('Like response:', response.data)
-      return response.data
+      
+      // Return the full response data structure
+      return {
+        success: true,
+        is_liked: response.data.is_liked,
+        likes_count: response.data.likes_count
+      }
     } catch (error) {
       console.error('Error liking snippet:', error.response?.data || error)
       throw error
@@ -181,21 +178,21 @@ export const snippets = {
 // Collections endpoints
 export const collections = {
   getAll: () => {
-    return api.get('/collections/').then(response => {
-      console.log('Collections response:', response.data) // Debug log
+    return api.get('collections/').then(response => {
+      console.log('Collections response:', response.data)
       return response
     })
   },
-  get: (id) => api.get(`/collections/${id}/`),
-  create: (data) => api.post('/collections/', data),
-  update: (id, data) => api.put(`/collections/${id}/`, data),
-  delete: (id) => api.delete(`/collections/${id}/`),
+  get: (id) => api.get(`collections/${id}/`),
+  create: (data) => api.post('collections/', data),
+  update: (id, data) => api.put(`collections/${id}/`, data),
+  delete: (id) => api.delete(`collections/${id}/`),
   addSnippet: (collectionId, snippetId) => 
-    api.post(`/collections/${collectionId}/add_snippet/`, { snippet_id: snippetId }),
+    api.post(`collections/${collectionId}/add_snippet/`, { snippet_id: snippetId }),
   removeSnippet: (collectionId, snippetId) => 
-    api.post(`/collections/${collectionId}/remove_snippet/`, { snippet_id: snippetId }),
-  share: (id) => api.post(`/collections/${id}/share/`),
-  getShared: (shareId) => api.get(`/collections/shared/${shareId}/`),
+    api.post(`collections/${collectionId}/remove_snippet/`, { snippet_id: snippetId }),
+  share: (id) => api.post(`collections/${id}/share/`),
+  getShared: (shareId) => api.get(`collections/shared/${shareId}/`),
 }
 
 export default api 
