@@ -13,6 +13,8 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   const { user } = useAuth()
   const [snippet, setSnippet] = useState(initialSnippet)
   const [isLiking, setIsLiking] = useState(false)
+  const [localLikes, setLocalLikes] = useState(snippet.likes_count || 0)
+  const [isLiked, setIsLiked] = useState(snippet.is_liked || false)
 
   const handleLike = async (e) => {
     e.stopPropagation()
@@ -24,19 +26,24 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
     try {
       setIsLiking(true)
       const response = await snippets.like(snippet.id)
-      if (response.data.success) {
-        const updatedSnippet = {
-          ...snippet,
-          is_liked: !snippet.is_liked,
-          likes_count: snippet.is_liked ? snippet.likes_count - 1 : snippet.likes_count + 1
+      
+      if (response.success) {
+        setIsLiked(response.is_liked)
+        setLocalLikes(response.likes_count)
+        
+        if (onLikeUpdate) {
+          onLikeUpdate({
+            ...snippet,
+            is_liked: response.is_liked,
+            likes_count: response.likes_count
+          })
         }
-        setSnippet(updatedSnippet)
-        onLikeUpdate?.(updatedSnippet)
-        toast.success(snippet.is_liked ? 'Removed from favorites' : 'Added to favorites')
+
+        toast.success(response.is_liked ? 'Added to favourites' : 'Removed from favourites')
       }
     } catch (error) {
-      console.error('Failed to like snippet:', error)
-      toast.error('Failed to update favorite status')
+      console.error('Like error details:', error.response?.data)
+      toast.error('Failed to update favourite')
     } finally {
       setIsLiking(false)
     }
@@ -61,11 +68,16 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="text-cyan-500 hover:text-cyan-400"
-            onClick={handleLike}
+            className={`text-cyan-500 hover:text-cyan-400 ${
+              isLiked ? 'text-red-500' : 'text-slate-400 hover:text-red-500'
+            }`}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleLike(e)
+            }}
             disabled={isLiking}
           >
-            <Heart className={`h-4 w-4 ${snippet.is_liked ? 'fill-current' : ''}`} />
+            <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
           </Button>
         </div>
         <div className="bg-slate-900 rounded-lg overflow-hidden">
@@ -83,7 +95,7 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
           </div>
           <div className="flex items-center gap-2 text-slate-300">
             <Star className="h-4 w-4" />
-            <span className="text-sm">{snippet.likes_count}</span>
+            <span className="text-sm">{localLikes}</span>
           </div>
         </div>
       </CardContent>

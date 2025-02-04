@@ -7,6 +7,8 @@ import { getInitials } from '../../lib/utils'
 const ProfileHeader = ({ user, onEdit, isLoading }) => {
   if (isLoading) return <ProfileHeaderSkeleton />
 
+  console.log('Profile data in header:', user) // Debug log
+
   return (
     <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-8 mb-6">
       <div className="flex flex-col md:flex-row gap-6">
@@ -25,7 +27,7 @@ const ProfileHeader = ({ user, onEdit, isLoading }) => {
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-2xl font-bold text-white">{user?.username}</h1>
-              <p className="text-slate-400">{user?.bio || 'No bio yet'}</p>
+              <p className="text-slate-400 mt-2">{user?.bio || 'No bio yet'}</p>
             </div>
             <Button
               variant="outline"

@@ -9,6 +9,8 @@ import { AlertCircle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import Spinner from '../components/ui/spinner'
 import PasswordInput from '../components/ui/password-input'
+import LoadingSquares from '../components/ui/LoadingSquares'
+import { useAuth } from '../context/AuthContext'
 
 const registerSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -18,16 +20,38 @@ const registerSchema = z.object({
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
-  password2: z.string()
+  password2: z.string(),
+  bio: z.string().optional(),
+  location: z.string().optional(),
+  dob: z.string().min(1, 'Date of birth is required')
 }).refine((data) => data.password1 === data.password2, {
   message: "Passwords don't match",
   path: ["password2"],
+}).superRefine((data, ctx) => {
+  // Calculate age
+  const birthDate = new Date(data.dob)
+  const today = new Date()
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const monthDiff = today.getMonth() - birthDate.getMonth()
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+
+  if (age < 13) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "You must be at least 13 years old to register",
+      path: ["dob"]
+    })
+  }
 })
 
 const Register = () => {
   const navigate = useNavigate()
+  const { login, setUser } = useAuth()
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(registerSchema)
@@ -35,30 +59,54 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      setIsLoading(true)
+      setIsRegistering(true)
       setError('')
-      console.log('Sending registration request:', data)
       
-      const response = await auth.register({
-        username: data.username,
-        email: data.email,
-        password1: data.password1,
-        password2: data.password2
-      })
+      console.log('Registration data being sent:', data)
+      
+      const delay = new Promise(resolve => setTimeout(resolve, 3000))
+      
+      const [response] = await Promise.all([
+        auth.register({
+          username: data.username,
+          email: data.email,
+          password1: data.password1,
+          password2: data.password2,
+          bio: data.bio || '',
+          location: data.location || '',
+          dob: data.dob
+        }),
+        delay
+      ])
+
+      console.log('Registration response:', response)
 
       if (response.data.access) {
-        localStorage.setItem('access_token', response.data.access)
-        localStorage.setItem('refresh_token', response.data.refresh)
-        toast.success('Registration successful!')
+        await login({
+          username: data.username,
+          password: data.password1
+        })
+        
+        setUser(response.profile)
+        
+        toast.success('Welcome to Code Blox!')
         navigate('/')
       }
     } catch (err) {
-      console.error('Registration error details:', err)
+      console.error('Registration error:', err)
       setError(err.response?.data?.detail || 'Registration failed')
       toast.error('Registration failed')
     } finally {
-      setIsLoading(false)
+      setIsRegistering(false)
     }
+  }
+
+  if (isRegistering) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <LoadingSquares />
+      </div>
+    )
   }
 
   return (
@@ -125,19 +173,50 @@ const Register = () => {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Bio (optional)
+            </label>
+            <textarea
+              {...register('bio')}
+              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Location (optional)
+            </label>
+            <input
+              {...register('location')}
+              type="text"
+              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Date of Birth <span className="text-red-400">*</span>
+            </label>
+            <input
+              {...register('dob')}
+              type="date"
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.dob && (
+              <span className="text-sm text-red-500 mt-1">
+                {errors.dob.message}
+              </span>
+            )}
+          </div>
+
           <Button 
             type="submit" 
-            className="w-full"
-            disabled={isLoading}
+            className="w-full h-12 bg-cyan-500 hover:bg-cyan-400 text-white font-medium px-4"
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center gap-2">
-                <Spinner />
-                <span>Creating Account...</span>
-              </div>
-            ) : (
-              'Create Account'
-            )}
+            Create Account
           </Button>
         </form>
 

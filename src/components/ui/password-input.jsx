@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import PasswordRequirements from './password-requirements'
+import zxcvbn from 'zxcvbn'
 
 const PasswordInput = ({ 
   register, 
@@ -12,6 +13,17 @@ const PasswordInput = ({
   placeholder = ''
 }) => {
   const [showPassword, setShowPassword] = useState(false)
+  const [strength, setStrength] = useState(0)
+
+  const handleChange = (e) => {
+    const password = e.target.value
+    if (password) {
+      const result = zxcvbn(password)
+      setStrength(result.score)
+    } else {
+      setStrength(0)
+    }
+  }
 
   return (
     <div>
@@ -23,6 +35,10 @@ const PasswordInput = ({
           {...register(name)}
           type={showPassword ? 'text' : 'password'}
           placeholder={placeholder}
+          onChange={(e) => {
+            register(name).onChange(e)
+            handleChange(e)
+          }}
           className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
         />
         <button
@@ -41,7 +57,19 @@ const PasswordInput = ({
         <span className="text-sm text-red-500 mt-1">{error}</span>
       )}
       {showRequirements && (
-        <PasswordRequirements password={value} />
+        <div className="mt-2">
+          <div className="h-1 w-full bg-slate-700 rounded-full overflow-hidden">
+            <div 
+              className={`h-full transition-all duration-300 ${
+                strength === 0 ? 'w-0' :
+                strength === 1 ? 'w-1/4 bg-red-500' :
+                strength === 2 ? 'w-2/4 bg-yellow-500' :
+                strength === 3 ? 'w-3/4 bg-green-400' :
+                'w-full bg-green-500'
+              }`}
+            />
+          </div>
+        </div>
       )}
     </div>
   )

@@ -8,8 +8,9 @@ import Spinner from './ui/spinner'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { auth } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 const profileSchema = z.object({
   bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
@@ -17,7 +18,8 @@ const profileSchema = z.object({
   is_public: z.boolean().optional(),
 })
 
-const EditProfileModal = ({ user, onClose, onSave, open, onOpenChange }) => {
+const EditProfileModal = ({ open, onOpenChange, user }) => {
+  const { setUser } = useAuth()
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -41,7 +43,7 @@ const EditProfileModal = ({ user, onClose, onSave, open, onOpenChange }) => {
       const response = await auth.updateAvatar(formData)
       
       if (response.data.success) {
-        onSave({ ...user, avatar_url: response.data.avatar_url })
+        setUser({ ...user, avatar_url: response.data.avatar_url })
         toast.success('Profile picture updated')
       }
     } catch (error) {
@@ -54,9 +56,12 @@ const EditProfileModal = ({ user, onClose, onSave, open, onOpenChange }) => {
 
   const onSubmit = async (data) => {
     try {
-      await onSave(data)
+      const response = await auth.updateProfile(data)
+      setUser(response.data)
+      toast.success('Profile updated successfully')
       onOpenChange(false)
     } catch (error) {
+      console.error('Failed to update profile:', error)
       toast.error('Failed to update profile')
     }
   }

@@ -7,6 +7,7 @@ import { snippets as snippetsApi } from '../../services/api'
 import { toast } from 'react-hot-toast'
 import { useState, useEffect } from 'react'
 import SnippetCard from '../SnippetCard'
+import { useAuth } from '../../context/AuthContext'
 
 const SnippetsGridSkeleton = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -34,48 +35,16 @@ const SnippetsGridSkeleton = () => (
   </div>
 )
 
-const SnippetsGrid = ({ snippets, isLoading }) => {
-  console.log('SnippetsGrid props:', { snippets, isLoading })
+const SnippetsGrid = ({ snippets }) => {
+  const { user } = useAuth()
   
-  const [localSnippets, setLocalSnippets] = useState(snippets)
-
-  useEffect(() => {
-    setLocalSnippets(snippets)
-  }, [snippets])
-
-  const handleLikeUpdate = (updatedSnippet) => {
-    setLocalSnippets(prev => 
-      prev.map(snippet => 
-        snippet.id === updatedSnippet.id ? updatedSnippet : snippet
-      )
-    )
-  }
-
-  if (isLoading) return <SnippetsGridSkeleton />
-  
-  if (!snippets?.length) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-slate-400">No snippets yet</p>
-        <Button 
-          variant="outline" 
-          className="mt-4 text-white border-slate-700"
-          onClick={() => navigate('/snippets/new')}
-        >
-          Create Your First Snippet
-        </Button>
-      </div>
-    )
-  }
+  // Filter snippets to only show the logged-in user's snippets
+  const userSnippets = snippets.filter(snippet => snippet.author === user.username)
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {localSnippets.map((snippet) => (
-        <SnippetCard 
-          key={snippet.id} 
-          snippet={snippet} 
-          onLikeUpdate={handleLikeUpdate}
-        />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {userSnippets.map(snippet => (
+        <SnippetCard key={snippet.id} snippet={snippet} />
       ))}
     </div>
   )

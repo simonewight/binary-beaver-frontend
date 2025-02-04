@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
-import { ToastProvider } from './components/ui/toast'
 import { AnimatePresence } from 'framer-motion'
 import './styles/global.css'
 import './styles/prism-custom.css'
@@ -34,9 +33,17 @@ function App() {
           <div className="relative">
             <StarField />
             <div className="relative z-20">
-              <Toaster />
+              <Toaster 
+                position="top-right"
+                toastOptions={{
+                  duration: 3000,
+                  style: {
+                    background: '#1e293b',
+                    color: '#fff',
+                  },
+                }}
+              />
               <Router>
-                <ToastProvider />
                 <AnimatePresence mode="wait">
                   <div className="app min-h-screen bg-gray-50">
                     <Routes>

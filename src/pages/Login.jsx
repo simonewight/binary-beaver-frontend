@@ -51,7 +51,7 @@ const Login = () => {
       })
       
       if (response.data.access) {
-        toast.success('Login successful!')
+        toast.success('Welcome back!')
         navigate('/')
       }
     } catch (err) {
@@ -128,7 +128,7 @@ const Login = () => {
             </div>
             <Button 
               type="submit" 
-              className="w-full"
+              className="w-full h-12 bg-cyan-500 hover:bg-cyan-400 text-white font-medium px-4"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -176,8 +176,8 @@ const Login = () => {
               </div>
               <Button 
                 type="submit" 
-                className="w-full"
                 disabled={isLoading}
+                className="w-full h-12 bg-cyan-500 hover:bg-cyan-400 text-white font-medium px-4"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">

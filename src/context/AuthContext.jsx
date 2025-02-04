@@ -15,17 +15,17 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     const token = localStorage.getItem('access_token')
-    console.log('Checking auth, token present:', !!token)  // Debug log
+    console.log('Checking auth, token present:', !!token)
     
     if (token) {
       try {
-        console.log('Getting profile...')  // Debug log
+        console.log('Getting profile...')
         const response = await auth.getProfile()
-        console.log('Profile response:', response.data)  // Debug log
+        console.log('Full profile response:', response) // Enhanced debug log
         setUser(response.data)
         setLoading(false)
       } catch (error) {
-        console.error('Auth check failed:', error.response || error)  // Enhanced error log
+        console.error('Auth check failed:', error.response || error)
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         setLoading(false)
@@ -37,23 +37,22 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      console.log('Attempting login...')  // Debug log
+      console.log('Attempting login...')
       const response = await auth.login(credentials)
-      console.log('Login response:', response.data)  // Debug log
+      console.log('Login response:', response.data)
       
       if (response.data.access) {
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         
-        console.log('Getting profile after login...')  // Debug log
+        // Get full user profile
         const profileResponse = await auth.getProfile()
-        console.log('Profile response after login:', profileResponse.data)  // Debug log
+        console.log('Profile response after login:', profileResponse.data)
         setUser(profileResponse.data)
         return response
       }
     } catch (error) {
-      console.error('Login failed:', error.response || error)  // Enhanced error log
-      toast.error(error.response?.data?.detail || 'Login failed')
+      console.error('Login failed:', error.response || error)
       throw error
     }
   }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8000/api'  // Make sure this matches your Django server
+const API_BASE_URL = 'http://localhost:8000/api'  // Verify this matches your backend URL
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,46 +12,72 @@ const api = axios.create({
 // Add auth token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token')
-  console.log('Request URL:', config.url)  // Debug log
-  console.log('Token present:', !!token)    // Debug log
+  console.log('Making request to:', config.url)
+  console.log('Auth token present:', !!token)
+  console.log('Full request config:', {
+    url: config.url,
+    method: config.method,
+    headers: config.headers,
+    data: config.data
+  })
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
+}, (error) => {
+  console.error('Request interceptor error:', error)
+  return Promise.reject(error)
 })
 
-// Add response interceptor
+// Add response interceptor with enhanced error handling
 api.interceptors.response.use(
   (response) => {
-    console.log('Response success:', response.config.url)  // Debug log
+    console.log('Response success:', {
+      url: response.config.url,
+      status: response.status,
+      data: response.data
+    })
     return response
   },
   async (error) => {
-    console.log('Response error:', {  // Debug log
-      url: error.config.url,
+    console.error('Response error:', {
+      url: error.config?.url,
       status: error.response?.status,
-      data: error.response?.data
+      data: error.response?.data,
+      message: error.message
     })
 
     const originalRequest = error.config
 
+    // Handle 401 Unauthorized errors
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
-      console.log('Attempting token refresh...')  // Debug log
+      console.log('Attempting token refresh...')
 
       try {
+        const refreshToken = localStorage.getItem('refresh_token')
+        if (!refreshToken) {
+          console.log('No refresh token found, redirecting to login')
+          window.location.href = '/login'
+          return Promise.reject(error)
+        }
+
         const response = await api.post('/auth/token/refresh/', {
-          refresh: localStorage.getItem('refresh_token')
+          refresh: refreshToken
         })
 
         if (response.data.access) {
-          console.log('Token refresh successful')  // Debug log
+          console.log('Token refresh successful')
           localStorage.setItem('access_token', response.data.access)
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`
           return api(originalRequest)
         }
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError)  // Debug log
+        console.error('Token refresh failed:', refreshError)
+        // Clear tokens and redirect to login
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
         window.location.href = '/login'
         return Promise.reject(refreshError)
       }
@@ -69,7 +95,31 @@ export const auth = {
       password: credentials.password
     })
   },
-  register: (userData) => api.post('/auth/registration/', userData),
+  register: async (userData) => {
+    try {
+      console.log('Registering with data:', userData) // Debug log
+      const response = await api.post('/auth/registration/', userData)
+      console.log('Registration response:', response.data) // Debug log
+      
+      if (response.data.access) {
+        localStorage.setItem('access_token', response.data.access)
+        localStorage.setItem('refresh_token', response.data.refresh)
+        
+        // Get the full user profile after registration
+        const profileResponse = await api.get('/users/me/')
+        console.log('Profile after registration:', profileResponse.data) // Debug log
+        
+        return {
+          ...response,
+          profile: profileResponse.data
+        }
+      }
+      throw new Error('Registration failed')
+    } catch (error) {
+      console.error('Registration error:', error.response?.data || error)
+      throw error
+    }
+  },
   refreshToken: () => api.post('/auth/token/refresh/'),
   logout: () => api.post('/auth/logout/'),
   getProfile: () => api.get('/users/me/'),
@@ -111,7 +161,26 @@ export const snippets = {
     return api.put(`/snippets/${id}/`, data)
   },
   delete: (id) => api.delete(`/snippets/${id}/`),
-  like: (id) => api.post(`/snippets/${id}/like/`),
+  like: async (id) => {
+    try {
+      console.log('Sending like request for snippet:', id)
+      const response = await api.post(`/snippets/${id}/like/`)
+      console.log('Like response:', response.data)
+      
+      if (response.data.success) {
+        return {
+          success: true,
+          is_liked: response.data.data.is_liked,
+          likes_count: response.data.data.likes_count
+        }
+      } else {
+        throw new Error(response.data.message)
+      }
+    } catch (error) {
+      console.error('Error liking snippet:', error.response?.data || error)
+      throw error
+    }
+  },
 }
 
 // Collections endpoints

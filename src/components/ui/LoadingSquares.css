@@ -1,0 +1,38 @@
+:root {
+  --size: 100px;
+  --th: 1px;
+}
+
+#container {
+  position: relative;
+  transform: translate(calc(-1/2 * var(--size)), calc(-1/2 * var(--size)));
+  margin-right: 6rem; /* Add space between animation and text */
+}
+
+.square {
+  border: solid rgb(6 182 212) var(--th);  /* Tailwind cyan-500 */
+  width: var(--size);
+  height: var(--size);
+  position: absolute;
+  box-shadow: rgba(6, 182, 212, 0.5) 0 0 calc(var(--size) / 10) inset, 
+              rgba(6, 182, 212, 0.5) 0 0 calc(var(--size) / 20);
+  animation: bounce 3s cubic-bezier(.46,.03,.52,.96) infinite alternate; /* Extended to 3s */
+  transform: rotate(45deg) translate(calc(-1 * var(--size) / 5), calc(-1 * var(--size) / 5));
+}
+
+.square:nth-of-type(2) {
+  animation-delay: 400ms; /* Adjusted delays for longer animation */
+}
+
+.square:nth-of-type(3) {
+  animation-delay: 800ms; /* Adjusted delays for longer animation */
+}
+
+@keyframes bounce {
+  from {
+    transform: rotate(45deg) translate(calc(-1 * var(--size) / 5), calc(-1 * var(--size) / 5)); 
+  }
+  to {
+    transform: rotate(45deg) translate(calc(var(--size) / 5), calc(var(--size) / 5));
+  }
+} 
