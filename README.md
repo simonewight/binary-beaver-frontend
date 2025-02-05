@@ -2,16 +2,16 @@
 > A modern code snippet sharing platform
 
 ## Mission Statement
-Code Blox is a collaborative platform designed for developers to share, discover, and organize code snippets. It provides a clean, modern interface for sharing code with syntax highlighting, comments, and collections functionality. The platform aims to make code sharing and discovery as seamless as possible.
+Code Blox is a collaborative platform designed for developers to share, discover, and organise code snippets. It provides a clean, modern interface for sharing code with syntax highlighting, comments, and collections functionality. The platform aims to make code sharing and discovery as seamless as possible.
 
 ## Features
 
 ### Summary
-- User authentication and authorization
+- User authentication and authorisation
 - Code snippet creation and sharing
 - Syntax highlighting for multiple languages
 - Comments and likes on snippets
-- Collections for organizing snippets
+- Collections for organising snippets
 - Search and filtering capabilities
 
 ### Users
@@ -40,7 +40,7 @@ Code Blox is a collaborative platform designed for developers to share, discover
 #### Git & Deployment
 - GitHub for version control
 - Netlify for front-end deployment
-- Render/Railway for back-end deployment
+- Heroku for back-end deployment
 
 # Your Product Name
 > Your Group Name
