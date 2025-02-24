@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { toast } from 'react-hot-toast'
 import CodePreview from './ui/CodePreview'
 
-const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
+const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate, showLoginPrompt }) => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [isLiking, setIsLiking] = useState(false)
@@ -54,7 +54,7 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   return (
     <Card 
       className="bg-slate-800 border-slate-700 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg"
-      onClick={() => navigate(`/snippet/${snippet.id}`)}
+      onClick={() => showLoginPrompt ? navigate('/login') : navigate(`/snippet/${snippet.id}`)}
     >
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">

@@ -48,33 +48,24 @@ function App() {
                   <div className="app min-h-screen bg-gray-50">
                     <Routes>
                       {/* Public routes */}
-                      <Route path="/login" element={
-                        <PageTransition>
-                          <Login />
-                        </PageTransition>
-                      } />
-                      <Route path="/register" element={
-                        <PageTransition>
-                          <Register />
-                        </PageTransition>
-                      } />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
-                      
-                      {/* Protected routes */}
+
+                      {/* Layout wrapper */}
                       <Route element={<Layout />}>
-                        <Route element={<ProtectedRoute />}>
-                          <Route path="/" element={
-                            <PageTransition>
-                              <Home />
-                            </PageTransition>
-                          } />
-                          <Route path="/profile" element={<Profile />} />
-                          <Route path="/collections" element={<Collections />} />
+                        {/* Home route is public but other routes require auth */}
+                        <Route path="/" element={<Home />} />
+                        
+                        {/* Protected routes */}
+                        <Route element={<PrivateRoute />}>
                           <Route path="/snippets" element={<Snippets />} />
-                          <Route path="/snippets/new" element={<NewSnippet />} />
                           <Route path="/snippet/:id" element={<SnippetDetail />} />
-                          <Route path="/snippet/:id/edit" element={<EditSnippet />} />
+                          <Route path="/collections" element={<Collections />} />
                           <Route path="/collection/:id" element={<CollectionDetail />} />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/new" element={<NewSnippet />} />
+                          <Route path="/edit/:id" element={<EditSnippet />} />
                         </Route>
                       </Route>
                     </Routes>

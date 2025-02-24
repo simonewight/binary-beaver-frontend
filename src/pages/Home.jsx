@@ -5,36 +5,26 @@ import { Card, CardContent } from '../components/ui/card'
 import { Search, Star, Heart, User } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import StarField from '../components/ui/StarField'
-import { snippets as snippetsApi } from '../services/api'
+import { snippets } from '../services/api'
 import SnippetCard from '../components/SnippetCard'
 
 const Home = () => {
-  const navigate = useNavigate()
   const { user } = useAuth()
-  const [featuredSnippets, setFeaturedSnippets] = useState([])
-  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  const [publicSnippets, setPublicSnippets] = useState([])
 
   useEffect(() => {
-    const loadFeaturedSnippets = async () => {
+    // Fetch public snippets
+    const fetchPublicSnippets = async () => {
       try {
-        setLoading(true)
-        // Get the 3 most liked snippets
-        const response = await snippetsApi.getAll({ 
-          limit: 3,
-          ordering: '-likes_count'  // Sort by most likes
-        })
-        if (response.data?.results) {
-          // Ensure we only take the first 3 even if API returns more
-          setFeaturedSnippets(response.data.results.slice(0, 3))
-        }
+        const response = await snippets.getAll({ is_public: true })
+        setPublicSnippets(response.data.results)
       } catch (error) {
-        console.error('Failed to load featured snippets:', error)
-      } finally {
-        setLoading(false)
+        console.error('Error fetching public snippets:', error)
       }
     }
 
-    loadFeaturedSnippets()
+    fetchPublicSnippets()
   }, [])
 
   const handleCategoryClick = (language) => {
@@ -42,7 +32,7 @@ const Home = () => {
   }
 
   const handleLikeUpdate = (updatedSnippet) => {
-    setFeaturedSnippets(currentSnippets => 
+    setPublicSnippets(currentSnippets => 
       currentSnippets.map(snippet => 
         snippet.id === updatedSnippet.id 
           ? { ...snippet, ...updatedSnippet }
@@ -58,48 +48,35 @@ const Home = () => {
       {/* Hero Section */}
       <div className="pt-20 pb-16 text-center">
         <h1 className="text-6xl font-extrabold text-white mb-6">
-          Build. Share. Play with Code.
+          Welcome to Code Blox
         </h1>
         <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-          Join the next generation of coders in a fun, interactive space where learning meets gaming.
+          Share, discover, and organize code snippets with ease
         </p>
-        <div className="flex justify-center gap-4">
-          <Button 
-            size="lg" 
-            className="bg-white text-slate-900 hover:bg-slate-100 px-8 py-3"
-            onClick={() => navigate(user ? '/profile' : '/register')}
-          >
-            {user ? 'Start Coding Now' : 'Get Started'}
-          </Button>
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="bg-cyan-500 hover:bg-cyan-400 text-white border-none px-8 py-3"
-            onClick={() => navigate('/snippets')}
-          >
-            Explore Blox
-          </Button>
-        </div>
+        {!user && (
+          <div className="flex justify-center gap-4">
+            <Button onClick={() => navigate('/register')}>
+              Get Started
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/login')}>
+              Sign In
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Featured Snippets */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-white mb-8">Featured Blox</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
-            // Show skeleton loading state
-            [1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse bg-slate-800 rounded-lg h-64" />
-            ))
-          ) : (
-            featuredSnippets.map(snippet => (
-              <SnippetCard
-                key={snippet.id}
-                snippet={snippet}
-                onLikeUpdate={handleLikeUpdate}
-              />
-            ))
-          )}
+          {publicSnippets.map(snippet => (
+            <SnippetCard
+              key={snippet.id}
+              snippet={snippet}
+              showLoginPrompt={!user}
+              onLikeUpdate={handleLikeUpdate}
+            />
+          ))}
         </div>
       </div>
 

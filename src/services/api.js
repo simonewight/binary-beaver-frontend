@@ -9,29 +9,35 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: false  // Change this to false for JWT
+  withCredentials: true
 })
 
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token')
-  console.log('Making request to:', config.url)
-  console.log('Auth token present:', !!token)
-  console.log('Full request config:', {
-    url: config.url,
-    method: config.method,
-    headers: config.headers,
-    data: config.data
-  })
-  
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+// Add a request interceptor to handle public routes
+api.interceptors.request.use(
+  (config) => {
+    // Allow public routes without authentication
+    if (config.url.startsWith('/snippets') && config.method === 'get') {
+      return config
+    }
+    const token = localStorage.getItem('access_token')
+    console.log('Making request to:', config.url)
+    console.log('Auth token present:', !!token)
+    console.log('Full request config:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+      data: config.data
+    })
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
   }
-  return config
-}, (error) => {
-  console.error('Request interceptor error:', error)
-  return Promise.reject(error)
-})
+)
 
 // Add response interceptor with enhanced error handling
 api.interceptors.response.use(
@@ -162,9 +168,11 @@ export const snippets = {
       const response = await api.post(`snippets/${snippetId}/like/`)
       console.log('Like response:', response.data)
       
+      // Handle different possible response formats
+      const data = response.data
       return {
-        is_liked: response.data.data.is_liked,
-        likes_count: response.data.data.likes_count
+        is_liked: data.data?.is_liked || data.is_liked,
+        likes_count: data.data?.likes_count || data.likes_count
       }
     } catch (error) {
       console.error('Like error:', {
