@@ -9,7 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true
+  withCredentials: false
 })
 
 // Add a request interceptor to handle public routes
@@ -29,6 +29,7 @@ api.interceptors.request.use(
       data: config.data
     })
     
+    // Add token if it exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -147,7 +148,22 @@ export const auth = {
 
 // Snippets endpoints
 export const snippets = {
-  getAll: (params) => api.get('snippets/', { params }),
+  getAll: async (params) => {
+    try {
+      console.log('Fetching snippets with params:', params)
+      const response = await api.get('snippets/', { 
+        params,
+        headers: {
+          // Don't send Authorization header for public routes
+          ...(params.is_public && { Authorization: undefined })
+        }
+      })
+      return response
+    } catch (error) {
+      console.error('Error fetching snippets:', error)
+      throw error
+    }
+  },
   get: async (id) => {
     const response = await api.get(`snippets/${id}/`)
     console.log('API Response for snippet:', response)
