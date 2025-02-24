@@ -158,17 +158,16 @@ export const snippets = {
   delete: (id) => api.delete(`snippets/${id}/`),
   toggleLike: async (snippetId) => {
     try {
-      console.log('Sending toggle like request for snippet:', snippetId)
+      console.log('Sending like request for snippet:', snippetId)
       const response = await api.post(`snippets/${snippetId}/like/`)
-      console.log('Toggle like response:', response.data)
+      console.log('Like response:', response.data)
       
-      // Make sure we're returning the correct data structure
       return {
-        is_liked: response.data.is_liked,
-        likes_count: response.data.likes_count
+        is_liked: response.data.data.is_liked,
+        likes_count: response.data.data.likes_count
       }
     } catch (error) {
-      console.error('Toggle like error:', {
+      console.error('Like error:', {
         status: error.response?.status,
         data: error.response?.data,
         message: error.message

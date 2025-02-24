@@ -41,10 +41,10 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
         onLikeUpdate(snippet.id, response)
       }
 
-      toast.success(response.is_liked ? 'Added to favorites' : 'Removed from favorites')
+      toast.success(response.is_liked ? 'Added to favourites' : 'Removed from favourites')
     } catch (error) {
       console.error('Error toggling like:', error)
-      const errorMessage = error.response?.data?.detail || 'Failed to update favorite status'
+      const errorMessage = error.response?.data?.detail || 'Failed to update favourite status'
       toast.error(errorMessage)
     } finally {
       setIsLiking(false)
@@ -72,15 +72,15 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
             size="sm" 
             className={`hover:bg-transparent ${
               snippet.is_liked 
-                ? 'text-red-500 hover:text-red-400'
-                : 'text-slate-400 hover:text-red-500'
+                ? 'text-cyan-500 hover:text-cyan-400'
+                : 'text-slate-400 hover:text-cyan-500'
             }`}
             onClick={handleLike}
             disabled={isLiking}
           >
             <Heart 
               className={`h-4 w-4 transition-colors ${
-                snippet.is_liked ? 'fill-current text-red-500' : ''
+                snippet.is_liked ? 'fill-current text-cyan-500' : ''
               }`} 
             />
           </Button>
