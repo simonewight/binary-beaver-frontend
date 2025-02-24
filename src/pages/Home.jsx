@@ -53,16 +53,23 @@ const Home = () => {
           <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
             Join the next generation of coders in a fun, interactive space where learning meets gaming.
           </p>
-          {!user && (
-            <div className="flex justify-center gap-4">
-              <Button onClick={() => navigate('/register')}>
-                Get Started
-              </Button>
-              <Button variant="outline" onClick={() => navigate('/login')}>
-                Sign In
-              </Button>
-            </div>
-          )}
+          <div className="flex justify-center gap-4">
+            <Button 
+              size="lg" 
+              className="bg-white text-slate-900 hover:bg-slate-100 px-8 py-3"
+              onClick={() => navigate(user ? '/profile' : '/register')}
+            >
+              {user ? 'Start Coding Now' : 'Get Started'}
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="bg-cyan-500 hover:bg-cyan-400 text-white border-none px-8 py-3"
+              onClick={() => navigate('/snippets')}
+            >
+              Explore Blox
+            </Button>
+          </div>
         </div>
 
         {/* Featured Snippets */}
