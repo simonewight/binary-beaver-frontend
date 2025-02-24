@@ -61,10 +61,10 @@ function App() {
                         <Route element={<PrivateRoute />}>
                           <Route path="/snippets" element={<Snippets />} />
                           <Route path="/snippet/:id" element={<SnippetDetail />} />
+                          <Route path="/snippets/new" element={<NewSnippet />} />
                           <Route path="/collections" element={<Collections />} />
                           <Route path="/collection/:id" element={<CollectionDetail />} />
                           <Route path="/profile" element={<Profile />} />
-                          <Route path="/new" element={<NewSnippet />} />
                           <Route path="/edit/:id" element={<EditSnippet />} />
                         </Route>
                       </Route>

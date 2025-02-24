@@ -47,6 +47,11 @@ const Layout = () => {
                   >
                     Sign Out
                   </Button>
+                  <Button 
+                    onClick={() => navigate('/snippets/new')}
+                  >
+                    New Snippet
+                  </Button>
                 </>
               ) : (
                 <>
