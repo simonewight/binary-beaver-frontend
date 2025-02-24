@@ -156,15 +156,10 @@ export const snippets = {
     return api.put(`snippets/${id}/`, data)
   },
   delete: (id) => api.delete(`snippets/${id}/`),
-  like: async (id) => {
+  toggleLike: async (snippetId) => {
     try {
-      console.log('Sending like request for snippet:', id)
-      const response = await api.post(`snippets/${id}/like/`)
-      console.log('Like response:', response.data)
-      
-      // Return the full response data structure
+      const response = await api.post(`snippets/${snippetId}/toggle_like/`)
       return {
-        success: true,
         is_liked: response.data.is_liked,
         likes_count: response.data.likes_count
       }

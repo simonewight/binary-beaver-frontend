@@ -12,12 +12,10 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [isLiking, setIsLiking] = useState(false)
-  const [localLikes, setLocalLikes] = useState(initialSnippet.likes_count || 0)
-  const [isLiked, setIsLiked] = useState(initialSnippet.is_liked || false)
+  const [snippet, setSnippet] = useState(initialSnippet)
 
   useEffect(() => {
-    setLocalLikes(initialSnippet.likes_count || 0)
-    setIsLiked(initialSnippet.is_liked || false)
+    setSnippet(initialSnippet)
   }, [initialSnippet])
 
   const handleLike = async (e) => {
@@ -29,25 +27,22 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
 
     try {
       setIsLiking(true)
-      const response = await snippets.like(initialSnippet.id)
+      const response = await snippets.toggleLike(snippet.id)
       
-      if (response.success) {
-        setIsLiked(response.is_liked)
-        setLocalLikes(response.likes_count)
-        
-        if (onLikeUpdate) {
-          onLikeUpdate({
-            ...initialSnippet,
-            is_liked: response.is_liked,
-            likes_count: response.likes_count
-          })
-        }
+      setSnippet(prev => ({
+        ...prev,
+        is_liked: response.is_liked,
+        likes_count: response.likes_count
+      }))
 
-        toast.success(response.is_liked ? 'Added to favourites' : 'Removed from favourites')
+      if (onLikeUpdate) {
+        onLikeUpdate(snippet.id, response)
       }
+
+      toast.success(response.is_liked ? 'Added to favorites' : 'Removed from favorites')
     } catch (error) {
-      console.error('Like error details:', error.response?.data)
-      toast.error('Failed to update favourite')
+      console.error('Error toggling like:', error)
+      toast.error('Failed to update favorite status')
     } finally {
       setIsLiking(false)
     }
@@ -56,15 +51,15 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
   return (
     <Card 
       className="bg-slate-800 border-slate-700 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg"
-      onClick={() => navigate(`/snippet/${initialSnippet.id}`)}
+      onClick={() => navigate(`/snippet/${snippet.id}`)}
     >
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-lg font-medium text-white">{initialSnippet.title}</h3>
+            <h3 className="text-lg font-medium text-white">{snippet.title}</h3>
             <div className="flex gap-2 mt-1">
-              <span className="text-slate-300 text-sm">{initialSnippet.language}</span>
-              {initialSnippet.tags?.map(tag => (
+              <span className="text-slate-300 text-sm">{snippet.language}</span>
+              {snippet.tags?.map(tag => (
                 <span key={tag} className="text-slate-300 text-sm">• {tag}</span>
               ))}
             </div>
@@ -73,23 +68,20 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
             variant="ghost" 
             size="sm" 
             className={`hover:bg-transparent ${
-              isLiked 
+              snippet.is_liked 
                 ? 'text-cyan-500 hover:text-cyan-400' 
                 : 'text-slate-400 hover:text-cyan-500'
             }`}
-            onClick={(e) => {
-              e.stopPropagation()
-              handleLike(e)
-            }}
+            onClick={handleLike}
             disabled={isLiking}
           >
-            <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+            <Heart className={`h-4 w-4 ${snippet.is_liked ? 'fill-current' : ''}`} />
           </Button>
         </div>
         <div className="bg-slate-900 rounded-lg overflow-hidden">
           <CodePreview 
-            code={initialSnippet.code_content}
-            language={initialSnippet.language}
+            code={snippet.code_content}
+            language={snippet.language}
           />
         </div>
         <div className="flex justify-between items-center mt-4">
@@ -97,11 +89,11 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
             <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
               <User className="h-4 w-4 text-white" />
             </div>
-            <span className="text-slate-300 text-sm">@{initialSnippet.owner.username}</span>
+            <span className="text-slate-300 text-sm">@{snippet.owner.username}</span>
           </div>
           <div className="flex items-center gap-2 text-slate-300">
             <Star className="h-4 w-4" />
-            <span className="text-sm">{localLikes}</span>
+            <span className="text-sm">{snippet.likes_count}</span>
           </div>
         </div>
       </CardContent>
