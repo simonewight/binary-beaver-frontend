@@ -113,15 +113,6 @@ Code Blox is a collaborative platform designed for developers to share, discover
 - Zod
 - Axios
 
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies:
-
-```bash
-npm install
-```
-
 ## Mission Statement
 
 > [!NOTE]  

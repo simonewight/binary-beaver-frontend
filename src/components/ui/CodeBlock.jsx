@@ -75,7 +75,7 @@ const CodeBlock = ({ code, language }) => {
 
   return (
     <TooltipProvider>
-      <div className="relative group bg-slate-900 rounded-lg">
+      <div className="relative bg-slate-900 rounded-lg border border-slate-800">
         {/* Language badge */}
         <div className="absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-slate-800 text-cyan-400 z-20">
           {language}
@@ -122,8 +122,8 @@ const CodeBlock = ({ code, language }) => {
 
         <div className={`code-container ${expanded ? 'expanded' : ''}`}>
           <div className="flex relative">
-            {/* Line numbers - Updated padding and line height */}
-            <div className="hidden md:block pl-4 pr-4 py-4 text-right bg-slate-800/50 rounded-l-lg select-none">
+            {/* Line numbers - Add fixed height and scrolling */}
+            <div className="hidden md:block pl-4 pr-4 py-4 text-right bg-slate-800/50 rounded-l-lg select-none overflow-y-auto">
               {lineNumbers.map(num => (
                 <div key={num} className="text-slate-500 text-sm leading-6">
                   {num}
@@ -131,9 +131,9 @@ const CodeBlock = ({ code, language }) => {
               ))}
             </div>
 
-            {/* Code content - Updated padding and line height */}
-            <div className="overflow-x-auto w-full p-4">
-              <pre className="language-${prismLanguage} overflow-x-auto">
+            {/* Code content - Add max-height and scrolling */}
+            <div className="overflow-auto w-full p-4 max-h-[500px]">
+              <pre className={`language-${prismLanguage}`}>
                 <code className={`language-${prismLanguage} leading-6`}>
                   {code}
                 </code>
