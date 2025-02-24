@@ -48,27 +48,26 @@ const CodePreview = ({ code, language }) => {
   return (
     <div className="bg-slate-900 rounded-lg border border-slate-800">
       <div className="flex justify-between items-center p-2 border-b border-slate-800">
-        <div className="absolute top-2 right-2 flex items-center gap-2 z-20">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
-                onClick={handleCopy}
-              >
-                {copied ? (
-                  <Check className="h-4 w-4 text-green-400" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{copied ? 'Copied!' : 'Copy Code'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        <span className="text-sm text-cyan-400">{language}</span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+              onClick={handleCopy}
+            >
+              {copied ? (
+                <Check className="h-4 w-4 text-green-400" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{copied ? 'Copied!' : 'Copy Code'}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <div className="relative">
