@@ -27,7 +27,9 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
 
     try {
       setIsLiking(true)
+      console.log('Attempting to toggle like for snippet:', snippet.id)
       const response = await snippets.toggleLike(snippet.id)
+      console.log('Toggle like response:', response)
       
       setSnippet(prev => ({
         ...prev,
@@ -42,7 +44,8 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
       toast.success(response.is_liked ? 'Added to favorites' : 'Removed from favorites')
     } catch (error) {
       console.error('Error toggling like:', error)
-      toast.error('Failed to update favorite status')
+      const errorMessage = error.response?.data?.detail || 'Failed to update favorite status'
+      toast.error(errorMessage)
     } finally {
       setIsLiking(false)
     }
@@ -69,13 +72,17 @@ const SnippetCard = ({ snippet: initialSnippet, onLikeUpdate }) => {
             size="sm" 
             className={`hover:bg-transparent ${
               snippet.is_liked 
-                ? 'text-cyan-500 hover:text-cyan-400' 
-                : 'text-slate-400 hover:text-cyan-500'
+                ? 'text-red-500 hover:text-red-400'
+                : 'text-slate-400 hover:text-red-500'
             }`}
             onClick={handleLike}
             disabled={isLiking}
           >
-            <Heart className={`h-4 w-4 ${snippet.is_liked ? 'fill-current' : ''}`} />
+            <Heart 
+              className={`h-4 w-4 transition-colors ${
+                snippet.is_liked ? 'fill-current text-red-500' : ''
+              }`} 
+            />
           </Button>
         </div>
         <div className="bg-slate-900 rounded-lg overflow-hidden">
