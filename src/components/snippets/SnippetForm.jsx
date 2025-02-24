@@ -11,14 +11,14 @@ import 'prismjs/components/prism-python'
 import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-css'
 import 'prismjs/components/prism-markup'
+import 'prismjs/components/prism-jsx'
 
 const LANGUAGE_OPTIONS = [
-  { value: 'python', label: 'Python' },
   { value: 'javascript', label: 'JavaScript' },
-  { value: 'typescript', label: 'TypeScript' },
+  { value: 'python', label: 'Python' },
   { value: 'html', label: 'HTML' },
   { value: 'css', label: 'CSS' },
-  { value: 'sql', label: 'SQL' },
+  { value: 'jsx', label: 'React (JSX)' },
 ]
 
 const SnippetForm = ({ initialData, onSubmit, submitLabel = 'Save' }) => {
