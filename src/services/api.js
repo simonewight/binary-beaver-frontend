@@ -63,29 +63,23 @@ api.interceptors.response.use(
     // Handle 401 Unauthorized errors
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
-      console.log('Attempting token refresh...')
-
+      
       try {
         const refreshToken = localStorage.getItem('refresh_token')
         if (!refreshToken) {
-          console.log('No refresh token found, redirecting to login')
-          window.location.href = '/login'
-          return Promise.reject(error)
+          throw new Error('No refresh token available')
         }
 
-        const response = await api.post('auth/token/refresh/', {
-          refresh: refreshToken
-        })
-
+        const response = await auth.refreshToken()
+        
         if (response.data.access) {
-          console.log('Token refresh successful')
           localStorage.setItem('access_token', response.data.access)
+          api.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`
           return api(originalRequest)
         }
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError)
-        // Clear tokens and redirect to login
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         window.location.href = '/login'
@@ -131,7 +125,15 @@ export const auth = {
       throw error
     }
   },
-  refreshToken: () => api.post('auth/token/refresh/'),
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem('refresh_token')
+    if (!refreshToken) {
+      throw new Error('No refresh token available')
+    }
+    return api.post('auth/token/refresh/', {
+      refresh: refreshToken
+    })
+  },
   logout: () => api.post('auth/logout/'),
   getProfile: () => api.get('users/me/'),
   updateProfile: (data) => api.patch('users/me/', data),
