@@ -25,31 +25,8 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data)
       } catch (error) {
         console.error('Auth check failed:', error.response || error)
-        // Only remove tokens if refresh token is invalid
-        if (error.response?.status === 401) {
-          try {
-            // Attempt to refresh the token
-            const refreshToken = localStorage.getItem('refresh_token')
-            if (refreshToken) {
-              const refreshResponse = await auth.refreshToken()
-              if (refreshResponse.data.access) {
-                localStorage.setItem('access_token', refreshResponse.data.access)
-                // Retry the profile fetch
-                const retryResponse = await auth.getProfile()
-                setUser(retryResponse.data)
-                setLoading(false)
-                return
-              }
-            }
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError)
-            // Clear tokens and user on refresh failure
-            localStorage.removeItem('access_token')
-            localStorage.removeItem('refresh_token')
-            setUser(null)
-          }
-        }
-        // If we get here, either refresh failed or there was a different error
+        
+        // Clear tokens and user state if authentication fails
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         setUser(null)

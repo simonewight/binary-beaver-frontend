@@ -51,17 +51,17 @@ api.interceptors.response.use(
     return response
   },
   async (error) => {
-    console.error('Response error:', {
-      url: error.config?.url,
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    })
-
     const originalRequest = error.config
 
-    // Handle 401 Unauthorized errors
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Only attempt refresh if:
+    // 1. It's a 401 error
+    // 2. We haven't tried to refresh already
+    // 3. We're not currently trying to refresh the token
+    if (
+      error.response?.status === 401 && 
+      !originalRequest._retry &&
+      !originalRequest.url.includes('auth/token/refresh/')
+    ) {
       originalRequest._retry = true
       
       try {
@@ -79,7 +79,7 @@ api.interceptors.response.use(
           return api(originalRequest)
         }
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError)
+        // Clear tokens and redirect to login
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         window.location.href = '/login'
@@ -130,9 +130,16 @@ export const auth = {
     if (!refreshToken) {
       throw new Error('No refresh token available')
     }
-    return api.post('auth/token/refresh/', {
-      refresh: refreshToken
-    })
+    
+    // Don't add Authorization header for refresh requests
+    return api.post('auth/token/refresh/', 
+      { refresh: refreshToken },
+      { 
+        headers: {
+          'Authorization': undefined  // Explicitly remove Authorization header
+        }
+      }
+    )
   },
   logout: () => api.post('auth/logout/'),
   getProfile: () => api.get('users/me/'),
