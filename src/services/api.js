@@ -3,6 +3,14 @@ import axios from 'axios'
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 console.log('API_BASE_URL:', API_BASE_URL)
 
+// Create a separate axios instance for refresh token requests
+const refreshApi = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  }
+})
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -40,23 +48,12 @@ api.interceptors.request.use(
   }
 )
 
-// Add response interceptor with enhanced error handling
+// Modify the response interceptor
 api.interceptors.response.use(
-  (response) => {
-    console.log('Response success:', {
-      url: response.config.url,
-      status: response.status,
-      data: response.data
-    })
-    return response
-  },
+  (response) => response,
   async (error) => {
     const originalRequest = error.config
 
-    // Only attempt refresh if:
-    // 1. It's a 401 error
-    // 2. We haven't tried to refresh already
-    // 3. We're not currently trying to refresh the token
     if (
       error.response?.status === 401 && 
       !originalRequest._retry &&
@@ -131,15 +128,10 @@ export const auth = {
       throw new Error('No refresh token available')
     }
     
-    // Don't add Authorization header for refresh requests
-    return api.post('auth/token/refresh/', 
-      { refresh: refreshToken },
-      { 
-        headers: {
-          'Authorization': undefined  // Explicitly remove Authorization header
-        }
-      }
-    )
+    // Use the separate axios instance that doesn't have the interceptors
+    return refreshApi.post('auth/token/refresh/', { 
+      refresh: refreshToken 
+    })
   },
   logout: () => api.post('auth/logout/'),
   getProfile: () => api.get('users/me/'),

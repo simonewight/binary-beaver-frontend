@@ -39,20 +39,19 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Attempting login...')
       const response = await auth.login(credentials)
-      console.log('Login response:', response.data)
       
       if (response.data.access) {
+        console.log('Login successful, storing tokens')
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         
         // Get full user profile
         const profileResponse = await auth.getProfile()
-        console.log('Profile response after login:', profileResponse.data)
         setUser(profileResponse.data)
         return response
       }
     } catch (error) {
-      console.error('Login failed:', error.response || error)
+      console.error('Login failed:', error.response?.data || error)
       throw error
     }
   }
